@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="suc_mer_pro" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c9a22b1f-7737-4eea-a9fc-cff97d7c923a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<parameter name="Sucursal" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="FecIni" class="java.lang.String">
+		<parameterDescription><![CDATA[FecIni]]></parameterDescription>
+	</parameter>
+	<parameter name="FecFin" class="java.lang.String">
+		<parameterDescription><![CDATA[FecFin]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select a.* from (
+
+
+SELECT
+	'MERMA' as Tipo,
+	m.id_merma, date_format(m.fec_reg,'%d/%m/%Y') AS fecha,
+	date_format(case when m.fec_cad IS NULL then CAST('1900-01-01' AS DATE) ELSE m.fec_cad END,'%d/%m/%Y') as fec_cad,
+	c.descripcion as motivo, case when m.observaciones IS NULL then '' ELSE ucase(m.observaciones) END AS obs,
+	case when m.observaciones OR m.observaciones = '' IS NULL then 0 ELSE 1 END AS obs_ban,
+	case when p.descripcion = 'Sin Asignar' then '' ELSE p.descripcion END AS pro,
+	case when cp.descripcion = 'Sin Asignar' then '' ELSE cp.descripcion END AS cat,
+	e.id_etiqueta,
+	case when e.descripcion = 'Sin Asignar' then '' ELSE e.descripcion END AS etiqueta,
+	ucase(s.descripcion) AS suc, t.descripcion as turno, ucase(u.usuario) AS usr, 'TODAS' as ts
+FROM
+	mermas AS m INNER JOIN 
+	categorias AS c ON c.id_categoria = m.motivo INNER JOIN 
+	productos AS p ON p.id_pro = m.id_producto INNER JOIN 
+	categorias AS cp ON cp.id_categoria = p.id_categoria INNER JOIN 
+	etiquetas AS e ON e.id_etiqueta = m.id_etiqueta INNER JOIN 
+	sucursales AS s ON s.id_sucursal = m.id_sucursal INNER JOIN 
+	turnos AS t ON t.id_turno = m.id_turno INNER JOIN 
+	usuarios AS u ON u.id_usuario = m.id_usuario
+WHERE 
+	m.id_estatus = 1 and
+	cast(m.fec_reg as date) between $P{FecIni} and $P{FecFin}
+	
+	
+	
+union all
+
+
+
+
+SELECT 
+	'DEVOLUCIÓN' as tipo,
+	d.id_devolucion, DATE_FORMAT(k.fecha,'%d/%m/%Y') AS fecha,
+	date_format(case when k.fec_cad IS NULL then CAST('1900-01-01' AS DATE) ELSE k.fec_cad END,'%d/%m/%Y') as fec_cad,
+	c.descripcion as motivo, case when d.observaciones IS NULL then '' ELSE ucase(d.observaciones) END AS obs,
+	case when d.observaciones OR d.observaciones = '' IS NULL then 0 ELSE 1 END AS obs_ban,
+	case when p.descripcion = 'Sin Asignar' then '' ELSE p.descripcion END AS pro,
+	case when c.descripcion = 'Sin Asignar' then '' ELSE c.descripcion END AS cat,
+	e.id_etiqueta,
+	case when e.descripcion = 'Sin Asignar' then '' ELSE e.descripcion END AS etiqueta,
+	ucase(s.descripcion) AS suc, t.descripcion as turno, ucase(u.usuario) AS usr, 'TODAS' as ts
+FROM
+	kardex AS k INNER JOIN 
+	productos AS p ON p.id_pro = k.id_pro INNER JOIN 
+	categorias AS c ON c.id_categoria = p.id_categoria INNER JOIN 
+	etiquetas AS e ON e.id_etiqueta = k.id_etiqueta INNER JOIN 
+	almacenes AS a ON a.id_almacen = k.id_almacen INNER JOIN 
+	sucursales AS s ON s.id_sucursal = a.id_sucursal INNER JOIN 
+	devoluciones AS d ON d.id_devolucion = k.id_doc INNER JOIN 
+	usuarios AS u ON u.id_usuario = d.id_usuario INNER JOIN 
+	turnos AS t ON t.id_turno = d.id_turno
+WHERE 
+	k.id_entidad = 58 and
+	d.id_estatus = 1 and
+	k.tipo_saldo = -1 and
+	k.id_tip_doc = 10 and
+	cast(k.fec_reg as date) between $P{FecIni} and $P{FecFin}
+	
+	
+	
+	) as a 
+	
+where
+	case when $P{Sucursal} = 'TODAS' then a.ts = $P{Sucursal} else a.suc = $P{Sucursal} end
+
+ORDER BY 
+	a.suc, a.id_merma]]>
+	</queryString>
+	<field name="Tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Tipo"/>
+	</field>
+	<field name="id_merma" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_merma"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mermas"/>
+	</field>
+	<field name="fecha" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	</field>
+	<field name="fec_cad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fec_cad"/>
+	</field>
+	<field name="motivo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="motivo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="obs"/>
+	</field>
+	<field name="obs_ban" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="obs_ban"/>
+	</field>
+	<field name="pro" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="pro"/>
+	</field>
+	<field name="cat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cat"/>
+	</field>
+	<field name="id_etiqueta" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_etiqueta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="etiquetas"/>
+	</field>
+	<field name="etiqueta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="etiqueta"/>
+	</field>
+	<field name="suc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="suc"/>
+	</field>
+	<field name="turno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="turno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="turnos"/>
+	</field>
+	<field name="usr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="usr"/>
+	</field>
+	<field name="ts" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ts"/>
+	</field>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{suc}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<rectangle>
+					<reportElement x="-20" y="1" width="595" height="10" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="cee5538a-816a-4107-98a0-2d3f577574a5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="1" y="1" width="281" height="10" uuid="9966081d-fb8a-4551-82a2-27be52a441b7">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="985e9579-dfec-4e4f-b9ac-47063360d0ab"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{suc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="53" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="7" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="c8f7fdd4-8a79-4f9a-a125-020af207cb3a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="a428ba8a-0393-4f5b-9826-533512d07446">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="7" width="452" height="17" forecolor="#000000" uuid="732e8c12-fe30-419b-a287-9340d48a02b9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Mermas por Sucursal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="23" width="170" height="10" uuid="efca065f-9cd2-4f2c-9061-b7b8663b0cc3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="118" y="33" width="170" height="10" uuid="0e548054-13fc-4372-a913-1bb458fd3756">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha: Del                     al ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="152" y="33" width="40" height="10" uuid="74344028-ecb6-4976-bb06-a9fedd3001fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FecIni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="33" width="90" height="10" uuid="912452d7-76f8-4ff3-a648-dcc196c98bf0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FecFin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="140" y="24" width="120" height="9" uuid="3dc56d81-c342-414f-bb77-8cc62a4c300d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="5" y="-7" width="89" height="44" uuid="b4d51054-98a1-4987-bdb0-abea0c1dcf18">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://calidad.sistematoga.com/images/logo.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<line>
+				<reportElement x="-19" y="10" width="593" height="1" forecolor="#ABABAB" uuid="88fc9ec1-a854-4a8f-8f41-3804e08af4d1"/>
+			</line>
+			<staticText>
+				<reportElement x="30" y="0" width="40" height="10" uuid="dcb7531d-8a8a-4fa0-a59b-ba7cccbbeb4a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="90" height="10" uuid="1bed88ed-922f-4fb6-93ab-99c22b053734">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="0" width="67" height="10" uuid="14b4ef4d-ee65-4f05-9d92-3673c16d477e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Etiqueta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="0" width="52" height="10" uuid="1d164491-da95-4999-937f-cd559a403ed3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Caducidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="0" width="55" height="10" uuid="11e0c437-4efe-42d8-823e-51187fa63679">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="0" width="82" height="10" uuid="c2022064-574a-47c0-b7a0-72ae6c039f2d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Turno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="0" width="90" height="10" uuid="1a488aef-e473-4fab-aa85-0bd51faf8738">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="0" width="29" height="10" uuid="4e9cf072-435d-42af-adac-92b4e0a4e747">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Folio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="0" width="53" height="10" uuid="c1cbd63b-8fae-49ba-8a75-365d439db7f6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="29" height="10" uuid="12e34e0a-2611-4782-a979-c17784679314">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8b356440-95df-4669-b681-1facf6641869"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_merma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="40" height="10" uuid="b88c72b6-52ec-4514-93d4-653c7e3039b0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dacbb6e7-63c5-4625-86d0-50a3bfa2ec7c"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="205" y="0" width="90" height="10" uuid="31741edc-9b09-4abd-bbcb-d5cf76f38803">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0c6d9a57-4ab5-480b-9817-d67e3d9c55ca"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{motivo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="90" height="10" uuid="5a5b1a0d-2b28-4530-8159-50c0756124c8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="10828d99-9125-424f-bf79-3f456cc33828"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="82" height="10" uuid="82ac9ec7-ae92-4142-9dee-3ec9d580c72f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cfd51566-f9b9-4cfd-88c7-ad36ee64cb6f"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="295" y="0" width="55" height="10" uuid="a2e6be61-1923-4100-bc81-427a279109a5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a7949e33-2bad-4153-ab74-6dd2074469f8"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usr}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#00B3FF" uuid="09ddf8b3-f929-4f29-9ef4-631288c5214e">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==1]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#FF8800" uuid="1ecfbe5f-7d3a-4453-b49d-434e75a3f98b">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==2]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#FCAFDD" uuid="ee92dd50-5be4-42d6-ab07-8640323035e2">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==3]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#FF0000" uuid="d270feaf-6c01-4476-8451-5b14d7145db7">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==4]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#08FD30" uuid="7c656c4f-e14f-4e5b-b2a8-1c9447b44e70">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==5]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="441" y="0" width="67" height="10" backcolor="#FBFF00" uuid="16941f4f-cb8b-435f-9727-42e3b1fe79e2">
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==7]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="441" y="0" width="67" height="10" uuid="d018425d-7fcd-4aa8-9cfe-6ce65d6a2722"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{etiqueta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="508" y="0" width="52" height="10" uuid="e479ca49-5253-4a77-8293-ef0ac0502c30">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b919b037-4187-4354-b294-b94ecbd3238b"/>
+					<printWhenExpression><![CDATA[$F{id_etiqueta}==0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_cad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="0" width="53" height="10" uuid="1071046f-71e1-44b2-8f2a-96d193432287">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6adefeac-5487-4de9-b59b-20f4867a6adb"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Tipo}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="10">
+			<printWhenExpression><![CDATA[$F{obs_ban}==1]]></printWhenExpression>
+			<textField>
+				<reportElement x="70" y="0" width="490" height="10" forecolor="#787878" uuid="df58298d-8a55-494c-9db0-bb59b0350897">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0223f981-4dc4-4e41-a444-671ded6cae11"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="2" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

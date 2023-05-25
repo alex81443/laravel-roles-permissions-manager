@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cierre_caja" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1d1ce5a5-d5ac-4f7c-847a-c5c61eca90d8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="472"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="520"/>
+	<parameter name="id_apertura_suc" class="java.lang.String">
+		<parameterDescription><![CDATA[id_apertura_suc]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	v.*
+from
+	vt_rpt_cie_caj as v
+where
+	v.id_apertura_suc = $P{id_apertura_suc}]]>
+	</queryString>
+	<field name="id_apertura_suc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_apertura_suc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="apertura_suc"/>
+	</field>
+	<field name="m_billetes" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_billetes"/>
+	</field>
+	<field name="m_monedas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_monedas"/>
+	</field>
+	<field name="m_otros" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_otros"/>
+	</field>
+	<field name="total" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cajas_det"/>
+	</field>
+	<field name="vou" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="vou"/>
+	</field>
+	<field name="val" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="val"/>
+	</field>
+	<field name="cxc" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="cxc"/>
+	</field>
+	<field name="c_b_1000" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_1000"/>
+	</field>
+	<field name="c_b_500" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_500"/>
+	</field>
+	<field name="c_b_200" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_200"/>
+	</field>
+	<field name="c_b_100" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_100"/>
+	</field>
+	<field name="c_b_50" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_50"/>
+	</field>
+	<field name="c_b_20" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_b_20"/>
+	</field>
+	<field name="c_m_20" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_20"/>
+	</field>
+	<field name="c_m_10" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_10"/>
+	</field>
+	<field name="c_m_5" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_5"/>
+	</field>
+	<field name="c_m_2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_2"/>
+	</field>
+	<field name="c_m_1" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_1"/>
+	</field>
+	<field name="c_m_05" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="c_m_05"/>
+	</field>
+	<field name="m_b_1000" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_1000"/>
+	</field>
+	<field name="m_b_500" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_500"/>
+	</field>
+	<field name="m_b_200" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_200"/>
+	</field>
+	<field name="m_b_100" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_100"/>
+	</field>
+	<field name="m_b_50" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_50"/>
+	</field>
+	<field name="m_b_20" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_b_20"/>
+	</field>
+	<field name="m_m_20" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_20"/>
+	</field>
+	<field name="m_m_10" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_10"/>
+	</field>
+	<field name="m_m_5" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_5"/>
+	</field>
+	<field name="m_m_2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_2"/>
+	</field>
+	<field name="m_m_1" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_1"/>
+	</field>
+	<field name="m_m_05" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="m_m_05"/>
+	</field>
+	<field name="ape_ant" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="ape_ant"/>
+	</field>
+	<field name="diferencia" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="diferencia"/>
+	</field>
+	<field name="fondo" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.label" value="fondo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<variable name="c_b_10001" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_1000}]]></variableExpression>
+	</variable>
+	<variable name="c_b_5001" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_500}]]></variableExpression>
+	</variable>
+	<variable name="c_b_2001" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_200}]]></variableExpression>
+	</variable>
+	<variable name="c_b_1001" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_100}]]></variableExpression>
+	</variable>
+	<variable name="c_b_501" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_50}]]></variableExpression>
+	</variable>
+	<variable name="c_b_201" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_b_20}]]></variableExpression>
+	</variable>
+	<variable name="m_b_10001" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_1000}]]></variableExpression>
+	</variable>
+	<variable name="m_b_5001" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_500}]]></variableExpression>
+	</variable>
+	<variable name="m_b_2001" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_200}]]></variableExpression>
+	</variable>
+	<variable name="m_b_1001" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_100}]]></variableExpression>
+	</variable>
+	<variable name="m_b_501" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_50}]]></variableExpression>
+	</variable>
+	<variable name="m_b_201" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_b_20}]]></variableExpression>
+	</variable>
+	<variable name="m_billetes1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_billetes}]]></variableExpression>
+	</variable>
+	<variable name="c_m_201" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_20}]]></variableExpression>
+	</variable>
+	<variable name="m_m_101" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_10}]]></variableExpression>
+	</variable>
+	<variable name="c_m_101" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_10}]]></variableExpression>
+	</variable>
+	<variable name="m_m_51" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_5}]]></variableExpression>
+	</variable>
+	<variable name="m_m_21" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_2}]]></variableExpression>
+	</variable>
+	<variable name="c_m_51" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_5}]]></variableExpression>
+	</variable>
+	<variable name="c_m_21" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_2}]]></variableExpression>
+	</variable>
+	<variable name="c_m_11" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_1}]]></variableExpression>
+	</variable>
+	<variable name="c_m_051" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_m_05}]]></variableExpression>
+	</variable>
+	<variable name="m_m_102" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_10}]]></variableExpression>
+	</variable>
+	<variable name="m_m_11" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_1}]]></variableExpression>
+	</variable>
+	<variable name="m_m_051" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_m_05}]]></variableExpression>
+	</variable>
+	<variable name="m_monedas1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{m_monedas}]]></variableExpression>
+	</variable>
+	<variable name="total1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="188">
+			<rectangle>
+				<reportElement x="0" y="0" width="595" height="18" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="3d39971d-f48c-4b47-a140-7cb26f5407d0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="20" y="0" width="276" height="18" uuid="ed9ec85c-9922-4998-81cc-77d72d6fe889">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[DETALLE DE CIERRE DE CAJA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="19" width="80" height="20" uuid="9d7b76ff-59cf-4a9c-a888-520c49542d61"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[BILLETES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="39" width="80" height="10" uuid="e62d2d61-e971-4467-b68c-453bac4ba281"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Mil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="49" width="80" height="10" uuid="066caaae-0ae0-492a-be2e-6ca7fbc58ebe"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Quinientos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="59" width="80" height="10" uuid="9b4a0060-30f8-490d-ba59-16bc40de5cca"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Doscientos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="69" width="80" height="10" uuid="1333d4a8-6b21-430f-86b9-4564c5f8a57c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Cien]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="79" width="80" height="10" uuid="6c426fcc-dfc6-4e17-ba47-28986b6631d4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Cincuenta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="89" width="80" height="10" uuid="2c416a1a-76db-400d-a76b-3833cf80c668"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Veinte]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="19" width="90" height="20" uuid="620d6a36-e5e3-4fd9-b246-bbc2d60df87a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[MONEDAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="39" width="90" height="10" uuid="221d0ec4-7c17-4185-9a9b-d113300f4eb5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Veinte]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="49" width="90" height="10" uuid="d0921b0e-eabe-483b-9396-df825df40900"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Diez]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="59" width="90" height="10" uuid="8f8e9293-160c-4302-a48d-401d73bf1db7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Cinco]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="69" width="90" height="10" uuid="cf566819-738e-4ae1-9255-f8e4b4bcbd2a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Dos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="79" width="90" height="10" uuid="c97393ec-908d-44de-b883-0691f4e287aa"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Uno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="89" width="90" height="10" uuid="575e0fe4-4087-497a-818d-3325bb212890"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Cincuenta Centavos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="150" width="80" height="17" uuid="63d3b0c6-7cf0-4d10-bbfd-be17208458e6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Cierre]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="500" y="150" width="95" height="17" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="d4fe253e-5788-48aa-b9d3-300a06d66456">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="110" y="39" width="29" height="10" forecolor="#787878" uuid="c7267347-e8cd-496e-a0ff-cda3bc2616b6">
+					<printWhenExpression><![CDATA[$F{c_b_1000}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_1000}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="49" width="29" height="10" isRemoveLineWhenBlank="true" forecolor="#787878" uuid="93719947-174c-4cc1-8cf9-73d04100c1c1">
+					<printWhenExpression><![CDATA[$F{c_b_500}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_500}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="59" width="29" height="10" forecolor="#787878" uuid="f0749fd9-6844-484b-9b1a-1c2deee965ce">
+					<printWhenExpression><![CDATA[$F{c_b_200}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_200}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="69" width="29" height="10" forecolor="#787878" uuid="f656f9bb-2445-47af-907c-978ede5c14d7">
+					<printWhenExpression><![CDATA[$F{c_b_100}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_100}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="79" width="29" height="10" forecolor="#787878" uuid="8be4b5f5-e263-491f-b153-60679e6cece4">
+					<printWhenExpression><![CDATA[$F{c_b_20}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_50}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="89" width="29" height="10" forecolor="#787878" uuid="a51a6c69-2bfe-44a3-b819-e5849bfe7256">
+					<printWhenExpression><![CDATA[$F{c_b_20}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_b_20}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="39" width="50" height="10" uuid="4a6ce46c-d80a-4123-aa46-c2dc91f7d46c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_1000}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="49" width="50" height="10" uuid="72a53b78-56e1-4fa0-90f3-5976135db69b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_500}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="59" width="50" height="10" uuid="f9419ba7-6945-43e9-ac0a-fa27646ecb02"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_200}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="69" width="50" height="10" uuid="780bb90c-7281-472e-be56-7e29163d7f49"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_100}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="79" width="50" height="10" uuid="26249ef1-575b-4107-b46f-cf1e9835118e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_50}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="146" y="89" width="50" height="10" uuid="c8ead747-61e8-44fe-a573-a4b9bc02be82"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_b_20}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="39" width="32" height="10" forecolor="#787878" uuid="b6d976a5-419f-43e6-9d4e-f72a43d7a585">
+					<printWhenExpression><![CDATA[$F{c_m_20}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_20}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="49" width="32" height="10" forecolor="#787878" uuid="f81ee30f-8d19-4386-8dfc-e0dbc486a0fa">
+					<printWhenExpression><![CDATA[$F{c_m_10}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="59" width="32" height="10" forecolor="#787878" uuid="c55caec1-99de-4932-9ef2-32455a8b32e4">
+					<printWhenExpression><![CDATA[$F{c_m_5}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="69" width="32" height="10" forecolor="#787878" uuid="1daaab66-7712-4797-b2c5-fd14f6106f36">
+					<printWhenExpression><![CDATA[$F{c_m_2}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="79" width="32" height="10" forecolor="#787878" uuid="c3935778-24c0-4571-9425-b8f47b8d4d6e">
+					<printWhenExpression><![CDATA[$F{c_m_1}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="89" width="32" height="10" forecolor="#787878" uuid="1a11bc0b-fef8-4e0f-8897-604c0c363bcc">
+					<printWhenExpression><![CDATA[$F{c_m_05}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_m_05}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="39" width="50" height="10" uuid="13a24773-e831-42de-b040-8da70430ab49"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_20}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="49" width="50" height="10" uuid="6f1cdd90-acd5-4941-964e-e400b6918611"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="59" width="50" height="10" uuid="2d3927be-ab6a-4341-9553-1787ad97cb96"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="69" width="50" height="10" uuid="1790e7b1-3e42-4de7-8a94-ff792b27ed01"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="79" width="50" height="10" uuid="d09d9d65-12af-45dc-b3b4-9df67f3fd2a7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="348" y="89" width="50" height="10" uuid="313c0bdc-ab44-44fd-8fa8-de870a173a6d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_m_05}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement mode="Opaque" x="146" y="104" width="50" height="17" forecolor="#000000" backcolor="#C8C8C8" uuid="8354a352-c56a-443c-96f6-e78500de74da"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_billetes}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement mode="Opaque" x="348" y="104" width="50" height="17" forecolor="#000000" backcolor="#C8C8C8" uuid="2c71b44c-6455-4e41-998d-3ae0b18bfe64"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_monedas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="500" y="150" width="70" height="17" uuid="0773cccd-9916-4e31-9261-363b12d916c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="410" y="19" width="80" height="20" uuid="24b07a65-e06a-41ca-ad13-3920c9a12f41"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[OTROS]]></text>
+			</staticText>
+			<textField pattern="#,#00.00">
+				<reportElement mode="Opaque" x="440" y="104" width="50" height="16" forecolor="#000000" backcolor="#C8C8C8" uuid="12aa5139-0ce1-493e-b032-af15f71aa456"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_otros}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="440" y="69" width="50" height="10" uuid="6b5a94e7-f8a5-4d89-84dc-067bc7f0ab54"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vou}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="440" y="79" width="50" height="10" uuid="5f4451a3-da18-4b7e-8ea0-65f3ca6cd105"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{val}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="440" y="89" width="50" height="10" uuid="6ffcd681-9c8d-4f69-8dde-9fe48e8a4835"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cxc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="410" y="89" width="30" height="10" uuid="e2c6d332-a15c-407c-b5b3-0c26b5696d59"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[CxC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="79" width="30" height="10" uuid="6d408383-9fc9-4aed-9347-e7d97b719720"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Vale]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="69" width="30" height="10" uuid="719d58bb-d93f-42b3-91ba-159b09a85650"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Voucher]]></text>
+			</staticText>
+			<textField pattern="#,#00.00">
+				<reportElement x="500" y="131" width="70" height="19" uuid="d123337f-e7dd-4123-a463-deedd6efe10a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fondo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="410" y="131" width="80" height="19" uuid="374197ef-793e-4c7e-9447-40229f2790a4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fondo]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

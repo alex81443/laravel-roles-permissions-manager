@@ -21,7 +21,7 @@ class PermissionController extends Controller
     {
         abort_if(Gate::denies('permissions_access'), Response::HTTP_FORBIDDEN, 'Forbidden');
 
-        $permissions = Permission::paginate(5)->appends($request->query());;
+        $permissions = Permission::paginate()->appends($request->query());;
         return view('admin.permissions.index',compact('permissions'));
     }
 
@@ -45,8 +45,33 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request)
     {
-        Permission::create($request->validated());
+        if(isset($request->mod)){
+        $access=Permission::create($request->validated());
+        $access->name=$request->name."_access";
+        $access->save();
 
+        $edit=Permission::create($request->validated());
+        $edit->name=$request->name."_edit";
+        $edit->save();
+
+        $delete=Permission::create($request->validated());
+        $delete->name=$request->name."_delete";
+        $delete->save();
+
+        $create=Permission::create($request->validated());
+        $create->name=$request->name."_create";
+        $create->save();
+
+        $show=Permission::create($request->validated());
+        $show->name=$request->name."_show";
+        $show->save();
+
+            
+
+        }else{
+            
+        Permission::create($request->validated());
+        }
         return redirect()->route('admin.permissions.index')->with('status-success','New Permission Created');
     }
 
@@ -74,6 +99,7 @@ class PermissionController extends Controller
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->validated());
+       
 
         return redirect()->route('admin.permissions.index')->with('status-success','Permission Updated');
     }

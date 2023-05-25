@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Clientes" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6882ecd3-6997-4e16-aedc-943b1f9a9412">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter "/>
+	<parameter name="Estado" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select a.* from (
+SELECT 
+cli.cliente AS Cliente, 
+cli.telefono AS Teléfono, 
+cli.email AS Email ,
+case when  cli.cumpleanios  is null then '' ELSE  cli.cumpleanios  END AS Aniversario,
+ucase(s.descripcion) AS Estado,
+'TODOS' AS te,
+cli.id_estatus
+FROM clientes as cli INNER JOIN 
+estatus as s ON cli.id_estatus=s.id_estatus
+WHERE 
+	cli.id_estatus > 0
+) as a
+where
+case when ($P{Estado} = 'TODOS') then (a.te = $P{Estado}) else (a.Estado = $P{Estado}) end
+ 
+order by a.id_estatus asc]]>
+	</queryString>
+	<field name="Cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="clientes"/>
+	</field>
+	<field name="Teléfono" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Teléfono"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="clientes"/>
+	</field>
+	<field name="Email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="clientes"/>
+	</field>
+	<field name="Aniversario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Aniversario"/>
+	</field>
+	<field name="Estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Estado"/>
+	</field>
+	<field name="te" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="te"/>
+	</field>
+	<field name="id_estatus" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_estatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="clientes"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="53" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="7" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="1d961e4b-cc9b-42c5-ae96-647f43aad381">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="7" width="452" height="17" forecolor="#000000" uuid="70d643a8-b6a2-46f6-961e-6a1cf07a15d7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Clientes]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="170" height="10" uuid="d39a3a95-8e63-473a-b1ce-95d7c85a057b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4760cd96-4379-4b67-9eeb-378ec97eee45"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="52" height="10" uuid="3776bc2b-7105-4f83-bd44-3167824fdd59">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fe9b794-b8df-44bc-b5f7-0620f19b4ddf"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="222" y="0" width="158" height="10" uuid="ffdb0ab2-6ea3-4365-81b7-2ee449873b55">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4a173c91-5e57-4831-b6ad-0f5ce3be809d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="64" height="10" uuid="7ed052e0-d83c-42ec-9dc3-d6702be9d246">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27107dba-7fb8-4ae3-98ad-1701fdf5eb81"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aniversario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="444" y="0" width="111" height="10" uuid="b3ba0890-ed80-459b-a90a-f7a43bf14f99">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3474a3aa-1c16-4dce-a9b5-f3676bf723c6"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="170" height="10" uuid="6145225b-18fe-4e77-919f-e5d8bbd815ca">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4760cd96-4379-4b67-9eeb-378ec97eee45"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="0" width="52" height="10" uuid="6c8896e2-678a-4aeb-a3b4-07fc954a3f47">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fe9b794-b8df-44bc-b5f7-0620f19b4ddf"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Teléfono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="222" y="0" width="158" height="10" uuid="87abf831-efc4-40f2-9fc1-9649b0de1d2c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4a173c91-5e57-4831-b6ad-0f5ce3be809d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="64" height="10" uuid="634001eb-1a98-48b2-82a8-6760c7a6f8d1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27107dba-7fb8-4ae3-98ad-1701fdf5eb81"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Aniversario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="111" height="10" uuid="d7b8f9eb-5478-4551-a58a-8263dbd41759">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3474a3aa-1c16-4dce-a9b5-f3676bf723c6"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Estado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

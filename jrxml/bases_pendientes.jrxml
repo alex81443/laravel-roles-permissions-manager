@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bases_pendientes" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="22a2ca48-7082-4b90-b653-e499b9ee1491">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LaToga.jrdax"/>
+	<parameter name="id_ape_suc" class="java.lang.Long">
+		<parameterDescription><![CDATA[id_ape_suc]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT		v.* 
+FROM			vt_rpt_ape_suc_bas_log AS v
+WHERE		v.id_apertura_suc = $P{id_ape_suc} 
+ORDER BY	v.grupo, v.pe]]>
+	</queryString>
+	<field name="id_apertura_suc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_apertura_suc"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_apertura_suc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="fec_prog" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fec_prog"/>
+		<property name="com.jaspersoft.studio.field.label" value="fec_prog"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="pe" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pe"/>
+		<property name="com.jaspersoft.studio.field.label" value="pe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="grupo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="grupo"/>
+		<property name="com.jaspersoft.studio.field.label" value="grupo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="importe_dep" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="importe_dep"/>
+		<property name="com.jaspersoft.studio.field.label" value="importe_dep"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<field name="tel" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tel"/>
+		<property name="com.jaspersoft.studio.field.label" value="tel"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_ape_suc_bas_log"/>
+	</field>
+	<group name="grupo_base">
+		<groupExpression><![CDATA[$F{grupo}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<textField>
+					<reportElement x="0" y="0" width="420" height="9" uuid="ab666c12-e102-4fb6-9bb6-95da7139fb5d"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="0" width="595" height="19" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="3f97e1ff-2aa8-4cfd-a2eb-a575ae24b99d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="575" height="19" uuid="eacfec83-7dfa-4a6e-a01c-7bae7255f32e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[BASES POR ENTREGAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="19" width="39" height="10" uuid="d94fdbf3-6d80-48f1-88e5-b88a25ba7749">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Folio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="49" y="19" width="61" height="10" uuid="f598a62d-10f4-4636-a835-c2de5412e8b0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha de Entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="19" width="70" height="10" uuid="8f1551d1-e0c8-4321-b499-27ca15237b36">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Importe DEG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="19" width="160" height="10" uuid="b08392df-3968-46be-8a4c-b57c5060c6c4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="19" width="70" height="10" uuid="eef97866-8aa6-45f9-ab98-f91198fb8c47">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField pattern="dd/M/yyyy">
+				<reportElement x="49" y="0" width="61" height="9" uuid="56463dec-311f-4ada-bf76-66bc588117d8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3beb2776-53db-43e6-a961-979c87812bd2"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_prog}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="0" width="39" height="9" uuid="c13775d6-80ec-410c-829f-1359f18c77f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a094e850-4cdf-4b95-b053-52b1690e8703"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00;(#,#00.00)">
+				<reportElement x="110" y="0" width="70" height="9" uuid="bf5f3a54-c555-4c06-8386-5b5d917d0d76">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5bf085b1-2fd0-4440-b31c-8447ab94bb18"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{importe_dep}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="0" width="160" height="9" uuid="526326b3-5bc8-42bb-bb15-95c0442ba85b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0498a22c-674e-4020-88f7-9e9340aa5903"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="0" width="70" height="9" uuid="cc9b5651-d1d6-4bd7-98ff-34bac3b757f1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="59ecb634-c146-48f3-a85d-387bc7c61594"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

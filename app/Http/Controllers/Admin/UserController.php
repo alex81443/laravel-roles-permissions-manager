@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserPhotoRequest;
+use App\Models\Firstlogin;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -51,7 +52,13 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        User::create($request->validated());
+        $user=User::create($request->validated());
+        $fl=new Firstlogin();
+        $fl->id_usuario=$user->id;
+        $fl->id_role=$user->role_id;
+        $fl->save();
+        $user->role_id=3;
+        $user->save();
         return redirect()->route('admin.users.index')->with(['status-success' => "New User Created"]);
     }
 

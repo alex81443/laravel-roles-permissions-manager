@@ -20,6 +20,8 @@
                             </span>
                         @enderror
                     </div>
+
+                    <label><input name="mod" type="checkbox" id="cbox1">¿Es Modulo?</label><br>
                 </div>
 
                 <div class="form-group row mb-0">

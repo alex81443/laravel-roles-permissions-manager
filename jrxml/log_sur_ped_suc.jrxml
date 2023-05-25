@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="log_sur_ped_suc" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5e0a14bc-2547-46ec-90fb-c2d996305bb6">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LaTogaProduccion"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="279"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="715"/>
+	<parameter name="Fecha" class="java.lang.String">
+		<parameterDescription><![CDATA[Fecha]]></parameterDescription>
+	</parameter>
+	<parameter name="Sucursal" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="Tipo" class="java.lang.String">
+		<parameterDescription><![CDATA[Tipo]]></parameterDescription>
+	</parameter>
+	<parameter name="Surtido" class="java.lang.String">
+		<parameterDescription><![CDATA[Surtido]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT 		v.*, concat(date_format(now(),'%d/%m/%Y'),' ',date_format(now(),'%H')+1,':',date_format(now(),'%i')) as fec_act
+FROM 			(
+					SELECT		v.id_ruta, v.id_chofer, v.operador, v.sucursal, v.clave, concat('  ',v.producto) as producto, v.orden, sum(v.cantPed) AS cantPed, sum(v.can_sur) AS can_sur, v.fecha_salida AS fecha, ps.pedidos, 1 AS c_ruta
+					FROM (
+											SELECT		re.id_ruta, c.id_chofer, concat(c.nombre,' ',c.apellidos) AS operador, ped.*, re.fecha_salida
+											FROM			ruta_eventos AS re LEFT JOIN 
+															ruta_eventos_det AS red ON red.id_ruta_evento = re.id_ruta LEFT JOIN (
+															SELECT		e.id_pedido_diario, s.descripcion AS sucursal, p.clave, p.descripcion AS producto, p.orden, 
+																			sum(case when s.id_gte_vtas <> e.id_usuario then 0 ELSE d.cantidad END + d.cantD + d.cantP) AS cantPed,
+																			max(case when sur.can_sur IS NULL then 0 ELSE sur.can_sur END) AS can_sur
+															FROM			pedido_diario AS e INNER JOIN 
+																			ped_diario_det AS d ON d.id_pedido_diario = e.id_pedido_diario INNER JOIN 
+																			sucursales AS s ON s.id_sucursal = e.id_sucursal INNER JOIN 
+																			productos AS p ON p.id_pro = d.id_pro LEFT JOIN 
+																			(SELECT i.id_pedido, i.id_ped_diario_det, i.id_pro, sum(i.total) as can_sur 
+																			FROM sur_inv AS i 
+																			WHERE i.tip_ped = 1 AND i.id_estatus = 1
+																			GROUP BY i.id_pedido, i.id_ped_diario_det, i.id_pro)	AS sur 
+																																					ON sur.id_pedido = e.id_pedido_diario AND sur.id_ped_diario_det = d.id_ped_diario_det AND sur.id_pro = p.id_pro
+															WHERE 		
+															
+															case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4,5) end 
+													
+															
+															AND e.autorizado = 3
+															GROUP BY 	e.id_pedido_diario, s.descripcion, p.clave, p.descripcion, p.orden) AS ped ON ped.id_pedido_diario = red.id_pedido INNER JOIN 
+															choferes AS c ON c.id_chofer = re.id_chofer
+											WHERE			red.tipo_pedido = 'PS' AND NOT (ped.id_pedido_diario IS NULL)
+											UNION ALL
+											SELECT		re.id_ruta, c.id_chofer, concat(c.nombre,' ',c.apellidos) AS operador, ped.*, re.fecha_salida
+											FROM			ruta_eventos AS re INNER JOIN 
+															ruta_eventos_det AS red ON red.id_ruta_evento = re.id_ruta LEFT JOIN (
+															SELECT		e.id_pedido_extra, s.descripcion AS sucursal, p.clave, p.descripcion AS producto, p.orden, 
+																			sum(d.cantidad) AS cantPed,
+																			max(case when sur.can_sur IS NULL then 0 ELSE sur.can_sur END) AS can_sur
+															FROM			pedido_extra AS e INNER JOIN 
+																			ped_extra_det AS d ON d.id_pedido_extra = e.id_pedido_extra INNER JOIN 
+																			sucursales AS s ON s.id_sucursal = e.id_sucursal INNER JOIN 
+																			productos AS p ON p.id_pro = d.id_pro LEFT JOIN 
+																			(SELECT i.id_pedido, i.id_ped_diario_det, i.id_pro, sum(i.total) as can_sur 
+																			FROM sur_inv AS i 
+																			WHERE i.tip_ped = 2 AND i.id_estatus = 1
+																			GROUP BY i.id_pedido, i.id_ped_diario_det, i.id_pro)	AS sur 
+																																					ON sur.id_pedido = e.id_pedido_extra AND sur.id_ped_diario_det = d.id_ped_extra_det AND sur.id_pro = p.id_pro
+															WHERE 		
+															case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4,5) end 															
+
+															GROUP BY 	e.id_pedido_extra, s.descripcion, p.clave, p.descripcion, p.orden) AS ped ON ped.id_pedido_extra = red.id_pedido INNER JOIN 
+															choferes AS c ON c.id_chofer = re.id_chofer
+											WHERE			red.tipo_pedido = 'PX' AND NOT (ped.id_pedido_extra IS NULL)
+					) AS v INNER JOIN (
+								SELECT id_ruta_evento, GROUP_CONCAT(DISTINCT folio) AS pedidos FROM ruta_eventos_det GROUP BY id_ruta_evento
+								) AS ps ON ps.id_ruta_evento = v.id_ruta
+					GROUP BY v.id_ruta, v.id_chofer, v.operador, v.sucursal, v.clave, v.producto, v.orden, v.fecha_salida, ps.pedidos
+					
+					
+					
+					
+					UNION ALL
+					SELECT 				0 AS id_ruta, 0 AS id_chofer, 'SIN RUTA ASIGNADA' AS operador, ped.sucursal, ped.clave, CONCAT('  ',ped.producto) AS producto, ped.orden, sum(ped.cantPed) AS cantPed, 
+					sum(ped.can_sur) AS can_sur, ped.fecha AS fecha, ped.pedidos, 0 AS c_ruta
+					
+					
+					
+					FROM (
+						
+						
+						
+						
+															SELECT	e.id_pedido_diario, s.descripcion AS sucursal, p.clave, p.descripcion AS producto, p.orden, 
+																			sum(case when s.id_gte_vtas <> e.id_usuario then 0 ELSE d.cantidad END + d.cantD + d.cantP) AS cantPed,
+																			max(case when sur.can_sur IS NULL then 0 ELSE sur.can_sur END) AS can_sur, e.fecha, ps.pedidos
+															FROM		pedido_diario AS e INNER JOIN 
+																			ped_diario_det AS d ON d.id_pedido_diario = e.id_pedido_diario INNER JOIN 
+																			sucursales AS s ON s.id_sucursal = e.id_sucursal INNER JOIN 
+																			productos AS p ON p.id_pro = d.id_pro LEFT JOIN 
+																			(SELECT i.id_pedido, i.id_ped_diario_det, i.id_pro, sum(i.total) as can_sur 
+																			FROM sur_inv AS i 
+																			WHERE i.tip_ped = 1 AND i.id_estatus in (1)
+																			GROUP BY i.id_pedido, i.id_ped_diario_det, i.id_pro)	AS sur 
+																																					ON sur.id_pedido = e.id_pedido_diario AND sur.id_ped_diario_det = d.id_ped_diario_det AND sur.id_pro = p.id_pro left join 
+																																					
+																																					(
+																																					SELECT peds.id_sucursal, GROUP_CONCAT(DISTINCT peds.pedido) AS pedidos
+																																					FROM (
+																																								SELECT		CONCAT('PS',e.id_pedido_diario) AS pedido, s.descripcion AS sucursal, e.fecha, e.id_sucursal
+																																								FROM			pedido_diario AS e INNER JOIN sucursales AS s ON s.id_sucursal = e.id_sucursal
+																																								WHERE 		case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end  AND e.autorizado = 3 AND s.descripcion = $P{Sucursal} and e.fecha = $P{Fecha}						
+																																								UNION ALL
+																																								SELECT		CONCAT('PX',e.id_pedido_extra) AS pedido, s.descripcion AS sucursal, e.fecha, e.id_sucursal
+																																								FROM			pedido_extra AS e INNER JOIN sucursales AS s ON s.id_sucursal = e.id_sucursal 
+																																								WHERE 		
+																																								case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end 
+																																								
+																																								AND s.descripcion = $P{Sucursal} and e.fecha = $P{Fecha}) AS peds) AS ps on ps.id_sucursal = s.id_sucursal
+																																					
+																																					
+																																					
+															WHERE 		
+																														case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end 
+															
+															
+															AND e.autorizado = 3
+															GROUP BY 	e.id_pedido_diario, s.descripcion, p.clave, p.descripcion, p.orden, ps.pedidos
+															
+															
+															
+															
+															UNION ALL
+															
+															
+															
+															
+															SELECT	e.id_pedido_extra, s.descripcion AS sucursal, p.clave, p.descripcion AS producto, p.orden, 
+																			sum(d.cantidad) AS cantPed, 
+																			max(case when sur.can_sur IS NULL then 0 ELSE sur.can_sur END) AS can_sur, e.fecha, ps.pedidos
+															FROM		pedido_extra AS e INNER JOIN 
+																			ped_extra_det AS d ON d.id_pedido_extra = e.id_pedido_extra INNER JOIN 
+																			sucursales AS s ON s.id_sucursal = e.id_sucursal INNER JOIN 
+																			productos AS p ON p.id_pro = d.id_pro LEFT JOIN 
+																			(SELECT i.id_pedido, i.id_ped_diario_det, i.id_pro, sum(i.total) as can_sur 
+																			FROM sur_inv AS i 
+																			WHERE i.tip_ped = 2 AND i.id_estatus in (1)
+																			GROUP BY i.id_pedido, i.id_ped_diario_det, i.id_pro)	AS sur 
+																																					ON sur.id_pedido = e.id_pedido_extra AND sur.id_ped_diario_det = d.id_ped_extra_det AND sur.id_pro = p.id_pro left join 
+																																					
+																																					(
+																																					SELECT peds.id_sucursal, GROUP_CONCAT(DISTINCT peds.pedido) AS pedidos
+																																					FROM (
+																																								SELECT		CONCAT('PS',e.id_pedido_diario) AS pedido, s.descripcion AS sucursal, e.fecha, e.id_sucursal
+																																								FROM			pedido_diario AS e INNER JOIN sucursales AS s ON s.id_sucursal = e.id_sucursal
+																																								WHERE 		case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end  AND e.autorizado = 3 AND s.descripcion = $P{Sucursal} and e.fecha = $P{Fecha}							
+																																								UNION ALL
+																																								SELECT		CONCAT('PX',e.id_pedido_extra) AS pedido, s.descripcion AS sucursal, e.fecha, e.id_sucursal
+																																								FROM			pedido_extra AS e INNER JOIN sucursales AS s ON s.id_sucursal = e.id_sucursal 
+																																								WHERE 		case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end AND s.descripcion = $P{Sucursal} and e.fecha = $P{Fecha}) AS peds) AS ps on ps.id_sucursal = s.id_sucursal
+															WHERE 		case when $P{Surtido} = 'SI' then e.id_estatus in (6) else e.id_estatus in (1,4) end 
+															GROUP BY 	e.id_pedido_extra, s.descripcion, p.clave, p.descripcion, p.orden, ps.pedidos
+															
+															
+															
+															
+															
+															
+															) AS ped
+															
+															GROUP BY 			ped.sucursal, ped.clave, CONCAT('  ',ped.producto), ped.fecha) AS v
+WHERE 		v.sucursal = $P{Sucursal} and v.fecha = $P{Fecha} and 
+					case when $P{Tipo} = 'RUTA' then v.c_ruta = 1 else v.c_ruta = 0 end
+order BY 	v.id_ruta, v.orden]]>
+	</queryString>
+	<field name="id_ruta" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_ruta"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_ruta"/>
+	</field>
+	<field name="id_chofer" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_chofer"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_chofer"/>
+	</field>
+	<field name="operador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="operador"/>
+		<property name="com.jaspersoft.studio.field.label" value="operador"/>
+	</field>
+	<field name="sucursal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sucursal"/>
+		<property name="com.jaspersoft.studio.field.label" value="sucursal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<field name="clave" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="clave"/>
+		<property name="com.jaspersoft.studio.field.label" value="clave"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="productos"/>
+	</field>
+	<field name="producto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="producto"/>
+		<property name="com.jaspersoft.studio.field.label" value="producto"/>
+	</field>
+	<field name="orden" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="orden"/>
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="productos"/>
+	</field>
+	<field name="cantPed" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cantPed"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantPed"/>
+	</field>
+	<field name="can_sur" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="can_sur"/>
+		<property name="com.jaspersoft.studio.field.label" value="can_sur"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pedido_diario"/>
+	</field>
+	<field name="pedidos" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pedidos"/>
+		<property name="com.jaspersoft.studio.field.label" value="pedidos"/>
+	</field>
+	<field name="c_ruta" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="c_ruta"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_ruta"/>
+	</field>
+	<field name="fec_act" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fec_act"/>
+		<property name="com.jaspersoft.studio.field.label" value="fec_act"/>
+	</field>
+	<variable name="cantPed1" class="java.math.BigDecimal" resetType="Group" resetGroup="ruta" calculation="Sum">
+		<variableExpression><![CDATA[$F{cantPed}]]></variableExpression>
+	</variable>
+	<variable name="can_sur1" class="java.math.BigDecimal" resetType="Group" resetGroup="ruta" calculation="Sum">
+		<variableExpression><![CDATA[$F{can_sur}]]></variableExpression>
+	</variable>
+	<group name="ruta" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{id_ruta}]]></groupExpression>
+		<groupHeader>
+			<band height="78">
+				<image>
+					<reportElement x="-12" y="-27" width="586" height="105" uuid="e28a54b1-eb65-47ed-be34-3a8fafe733ff">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA["https://calidad.sistematoga.com/images/toga_encabezado_reporte.png"]]></imageExpression>
+				</image>
+				<image>
+					<reportElement x="-7" y="10" width="87" height="52" uuid="c20735cd-ac69-4b2d-90ce-b2507cea2030">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA["https://calidad.sistematoga.com/images/LA_TOGA_LOGO.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="102" y="0" width="160" height="17" uuid="5bef5c34-768e-4741-9dca-90656c615b0d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="13" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SURTIDO A SUCURSAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="80" y="18" width="47" height="11" forecolor="#CC0099" uuid="986cfcd0-0c89-4a56-868a-f997d6426554">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="80" y="29" width="47" height="11" uuid="4c1ea411-a661-483e-9a32-1e3165f0707c">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="136" y="29" width="126" height="11" uuid="b6ffbd7c-f898-49ff-937a-d59c86f46a29"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="-7" y="62" width="269" height="16" uuid="fd9c8632-fb61-4e07-a96b-b8f1ff7186fa">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Copia Operador]]></text>
+				</staticText>
+				<image>
+					<reportElement x="292" y="10" width="87" height="52" uuid="ec12c423-4626-4375-b3cd-cec6fdde76dd">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<imageExpression><![CDATA["https://calidad.sistematoga.com/images/LA_TOGA_LOGO.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement x="401" y="0" width="160" height="17" uuid="076c2590-7a6e-4ab2-803b-07315f70a4dc">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="13" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SURTIDO A SUCURSAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="379" y="18" width="47" height="11" forecolor="#CC0099" uuid="0c7dc468-648a-463d-8ea3-0d2b9390deba">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="379" y="29" width="47" height="11" uuid="ed32763a-f069-48a2-9ed8-8e15838ec60d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Sucursal]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="435" y="29" width="126" height="11" uuid="3adcb100-93cc-402c-a805-81f512219978"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="292" y="62" width="269" height="16" uuid="8dfb2eac-8ca1-4782-9310-ff19790e2e9d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Copia Sucursal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="80" y="40" width="47" height="11" uuid="a8dd39c2-f310-470b-af30-b2c4d2dd784d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Operador]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="136" y="40" width="126" height="11" uuid="80a72ea8-e523-4305-950d-0d3d84bf00df"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{operador}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="379" y="40" width="47" height="11" uuid="c25f9c6d-14f5-47fd-b7ca-7de04784b950">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Operador]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="435" y="40" width="126" height="11" uuid="34738b78-eb60-4238-9801-67d4f2af1547"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{operador}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="80" y="51" width="47" height="11" uuid="04e6bf59-5104-42b3-811e-46c0c250c4ac">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Pedidos]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="136" y="51" width="126" height="11" uuid="b62a7a74-41d5-45dd-b299-25561d3b16e4"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pedidos}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="379" y="51" width="47" height="11" uuid="7c1edafe-ad6c-4aca-97d3-ae226c0701ee">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7"/>
+					</textElement>
+					<text><![CDATA[Pedidos]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="435" y="51" width="126" height="11" uuid="cd6d6619-38de-4e3b-888e-99c8328a217d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pedidos}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="136" y="18" width="126" height="11" forecolor="#CC0099" uuid="79f3f7d9-9c64-4f48-87b5-54267372551f"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{Fecha}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="435" y="18" width="126" height="11" forecolor="#CC0099" uuid="1b009d08-7f77-405e-9174-9282f921f4ff"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{Fecha}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="11">
+				<staticText>
+					<reportElement mode="Opaque" x="-7" y="0" width="52" height="11" backcolor="#C8C8C8" uuid="4c5d9d30-57c6-4308-9e8d-c97693522e48">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CLAVE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="45" y="0" width="145" height="11" backcolor="#C8C8C8" uuid="d4780352-aa52-4b75-a9b7-fa1a1862ec5b">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[  PRODUCTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="190" y="0" width="36" height="11" backcolor="#C8C8C8" uuid="9adf3a01-0bf0-45f4-9634-767550afe3c3">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PEDIDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="226" y="0" width="36" height="11" backcolor="#C8C8C8" uuid="f7bd76c6-3213-4c61-8d13-5408ab789391">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SURTIDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="292" y="0" width="52" height="11" backcolor="#C8C8C8" uuid="7f5aa302-af16-4faa-a08b-fa08a168ff88">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CLAVE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="344" y="0" width="145" height="11" backcolor="#C8C8C8" uuid="1762379a-e8a2-4af7-9751-d7e45a0f5259">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[  PRODUCTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="489" y="0" width="36" height="11" backcolor="#C8C8C8" uuid="3e5362b7-6285-489d-8e7d-8c8e60ff04d3">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PEDIDO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="525" y="0" width="36" height="11" backcolor="#C8C8C8" uuid="7572bbbc-7066-4632-9be6-73ea9a75c7b2">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SURTIDO]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement mode="Opaque" x="138" y="3" width="52" height="11" backcolor="#C8C8C8" uuid="f78facec-1224-4e73-80db-45da908f3a55">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL  ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="437" y="3" width="52" height="11" backcolor="#C8C8C8" uuid="a9cf8a77-1584-4421-b560-bf82168aa212">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL  ]]></text>
+				</staticText>
+				<textField pattern="#,###.###;#,###.###-">
+					<reportElement mode="Opaque" x="190" y="3" width="36" height="11" backcolor="#C8C8C8" uuid="21203207-63d6-49e5-bcea-6cc8a109a02f"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cantPed1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,###.###;#,###.###-">
+					<reportElement mode="Opaque" x="226" y="3" width="36" height="11" backcolor="#C8C8C8" uuid="fb52b546-b1eb-4c7f-b8ca-55b620013b3b"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{can_sur1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,###.###;#,###.###-">
+					<reportElement mode="Opaque" x="489" y="3" width="36" height="11" backcolor="#C8C8C8" uuid="67d5f8f3-5017-4840-b1db-ccf03fa9c752"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cantPed1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,###.###;#,###.###-">
+					<reportElement mode="Opaque" x="525" y="3" width="36" height="11" backcolor="#C8C8C8" uuid="5920e4a8-9b04-42da-9c62-5fb47e4b103c"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#969696"/>
+						<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{can_sur1}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="20">
+				<textField>
+					<reportElement x="190" y="9" width="72" height="11" forecolor="#969696" uuid="3b7abd57-8deb-4f59-bc72-2e50706ae2c2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fec_act}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="138" y="9" width="52" height="11" forecolor="#969696" uuid="a98b1a97-05c7-4908-9a8e-a292d51ce45f">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[IMPRESIÓN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="437" y="9" width="52" height="11" forecolor="#969696" uuid="b537854a-77fb-4b7e-b59b-a3135b83a2f6">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[IMPRESIÓN]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="489" y="9" width="72" height="11" forecolor="#969696" uuid="782d6960-dba9-4e90-899f-a49f717f568f"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fec_act}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-7" y="9" width="134" height="1" forecolor="#ABABAB" uuid="bd6fdc2e-6c21-4968-a547-2a1087143580"/>
+					<graphicElement>
+						<pen lineWidth="1.0"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="-7" y="9" width="134" height="11" uuid="7e8bdb00-16db-489c-acae-8deacb83b26a">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[FIRMA DE CONFORMIDAD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="292" y="9" width="134" height="11" uuid="782eed1e-4056-4788-9f94-61c1531a9db0">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[FIRMA DE CONFORMIDAD]]></text>
+				</staticText>
+				<line>
+					<reportElement x="292" y="9" width="134" height="1" forecolor="#ABABAB" uuid="c346b0aa-6bef-4b77-871e-21d0e63c9134"/>
+					<graphicElement>
+						<pen lineWidth="1.0"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="12" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField>
+				<reportElement x="-7" y="0" width="52" height="11" uuid="852cd627-7fdb-4743-8018-b26c1249c455">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5ead2e77-b6b3-4823-9458-68226919ad17"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;(#,##0.###-)">
+				<reportElement x="190" y="0" width="36" height="11" uuid="c0daf329-7e34-4b4b-9c69-8b2972563d39">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0dfe8371-8b10-471b-95cd-46f9d1a5fc30"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantPed}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;(#,##0.###-)">
+				<reportElement x="226" y="0" width="36" height="11" uuid="aa461dd9-a588-4662-a641-3103d8b2ce7a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="edc656a4-ec94-4480-bd00-0d96ee408c3f"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{can_sur}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;(#,##0.###-)">
+				<reportElement x="525" y="0" width="36" height="11" uuid="339c2a6e-3384-4fab-b0c6-a087122d43e5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="edc656a4-ec94-4480-bd00-0d96ee408c3f"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{can_sur}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;(#,##0.###-)">
+				<reportElement x="489" y="0" width="36" height="11" uuid="0002a8bc-9e8e-470c-94a4-95c27106a336">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0dfe8371-8b10-471b-95cd-46f9d1a5fc30"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantPed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="292" y="0" width="52" height="11" uuid="b564701f-a619-4eb9-b626-06aae553755a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5ead2e77-b6b3-4823-9458-68226919ad17"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="344" y="0" width="145" height="11" uuid="d42316e2-b816-47e8-9440-b65645531ba4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a132ade9-c722-450a-8c3f-6da2cd3f7ebe"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="0" width="145" height="11" uuid="666cf3fa-be2a-4a18-b889-379f12f535c0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a132ade9-c722-450a-8c3f-6da2cd3f7ebe"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#969696"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#969696"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

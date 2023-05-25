@@ -6,6 +6,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use JeroenNoten\LaravelAdminLte\Events\DarkModeWasToggled;
+use JeroenNoten\LaravelAdminLte\Events\ReadingDarkModePreference;
+use JeroenNoten\LaravelAdminLte\Http\Controllers\DarkModeController;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        
     }
+    
+   
+    
 }

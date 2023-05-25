@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="forma_det" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ada2da99-b17a-4726-9b15-ef0f7310f876">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="id_arch" class="java.lang.String">
+		<parameterDescription><![CDATA[id_arch]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT a.* FROM (
+
+SELECT
+	a.id_arch,
+	CONCAT('https://calidad.sistematoga.com/files/formas/',replace(a.nombre_serv,' ','%20')) AS ruta
+FROM
+	formas AS f INNER JOIN 
+	archivos AS a ON a.id_arch = f.id_archivo
+WHERE 
+	a.id_arch > 0 AND a.nombre_serv <> '' AND not(a.nombre_serv IS NULL) AND f.id_estatus = 1
+
+UNION ALL
+	
+SELECT
+	a.id_arch,
+	CONCAT('https://calidad.sistematoga.com/files/productos/',replace(a.nombre_serv,' ','%20')) AS ruta
+FROM
+	productos AS p INNER JOIN 
+	archivos AS a ON a.id_arch = p.id_archivo
+WHERE 
+	a.id_arch > 0 AND a.nombre_serv <> '' AND not(a.nombre_serv IS NULL) AND p.id_estatus = 1
+
+UNION ALL
+
+SELECT
+	a.id_arch,
+	CONCAT('https://calidad.sistematoga.com/files/bases/',replace(a.nombre_serv,' ','%20')) AS ruta
+FROM
+	bases AS p INNER JOIN 
+	archivos AS a ON a.id_arch = p.id_archivo
+WHERE 
+	a.id_arch > 0 AND a.nombre_serv <> '' AND not(a.nombre_serv IS NULL) AND p.id_estatus = 1
+
+
+
+) as a
+where a.id_arch = $P{id_arch}
+order by 
+	a.id_arch]]>
+	</queryString>
+	<field name="id_arch" class="java.math.BigInteger">
+		<property name="com.jaspersoft.studio.field.label" value="id_arch"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="archivos"/>
+	</field>
+	<field name="ruta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ruta"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="39">
+			<image evaluationTime="Report">
+				<reportElement x="40" y="0" width="60" height="39" uuid="a211aee6-88ce-4bea-8432-95ee36000107"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#646464"/>
+				</box>
+				<imageExpression><![CDATA[$F{ruta}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+</jasperReport>

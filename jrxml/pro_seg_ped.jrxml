@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pro_seg_ped" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cf6808bf-20c2-43f5-b128-0c7d1a3bb75c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="158"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="836"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<parameter name="Fecha" class="java.lang.String">
+		<parameterDescription><![CDATA[Fecha]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+	e.fecha,	date_format(e.fec_reg,'%d/%m/%Y %H:%i') as fecha_mx, e.fec_reg, e.id_pedido_diario,
+	case when e.id_estatus = 2 OR e.id_estatus = 3 then "SI" ELSE "NO" END AS Cancelado,
+	case when e.id_estatus = 2 OR e.id_estatus = 3 then "-" ELSE (case when e.autorizado = 1 then "SI" ELSE "NO" END) END AS Autorizado,
+	case when e.id_estatus = 2 OR e.id_estatus = 3 then "-" ELSE (case when e.id_estatus = 4 OR e.id_estatus = 5 then "SI" ELSE "NO" END) END AS Surtido,
+	case when e.id_estatus = 2 OR e.id_estatus = 3 then "-" ELSE (case when e.id_estatus = 5 then "SI" ELSE "NO" END) END AS Recepcionado,
+	suc.clave, ucase(suc.descripcion) AS Suc,
+	date_format(now(),'%d/%m/%Y %H:%i') AS fec_act
+FROM
+	pedido_diario AS e INNER JOIN
+	sucursales AS suc ON suc.id_sucursal = e.id_sucursal
+WHERE
+	e.fecha = $P{Fecha}
+ORDER BY
+	suc.descripcion, e.id_pedido_diario]]>
+	</queryString>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pedido_diario"/>
+	</field>
+	<field name="fecha_mx" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_mx"/>
+	</field>
+	<field name="fec_reg" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_reg"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pedido_diario"/>
+	</field>
+	<field name="id_pedido_diario" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_pedido_diario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pedido_diario"/>
+	</field>
+	<field name="Cancelado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Cancelado"/>
+	</field>
+	<field name="Autorizado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Autorizado"/>
+	</field>
+	<field name="Surtido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Surtido"/>
+	</field>
+	<field name="Recepcionado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Recepcionado"/>
+	</field>
+	<field name="clave" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="clave"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<field name="Suc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Suc"/>
+	</field>
+	<field name="fec_act" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fec_act"/>
+	</field>
+	<group name="Suc">
+		<groupExpression><![CDATA[$F{Suc}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="65" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-21" y="11" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="d0e05f55-3ae0-4ed4-8313-e6d890bc84f1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="10" width="452" height="17" forecolor="#000000" uuid="16edbcd1-4159-4ee2-918b-b97e0921e7f9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Seguimiento a Pedidos por Sucursal]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="341c4dfd-9678-4b5c-861f-2f302284c4fa">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<image>
+				<reportElement x="-5" y="-8" width="103" height="47" uuid="5f444030-fd1d-4448-be8c-12c5f965fe66">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["http://deuxdemo.com/proyectos/pasteleria_la_toga/logo.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="110" y="31" width="30" height="11" uuid="cd94303c-dfa5-4663-9da5-4c55ef6b5fcd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="179" y="35" width="100" height="30" uuid="2101f45b-8a96-4785-898b-089a437e96ed"/>
+				<textFieldExpression><![CDATA[$P{Fecha}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="29" height="10" uuid="73477052-15aa-43c2-9766-9c8d60375fff">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f59387d-aa20-49de-ace3-38ae6e501f2d"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sucursal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="0" width="90" height="10" uuid="d0bf771d-bbf6-490e-aefb-8acf4042e6bf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="39043aeb-9b8e-4291-aba6-8cb68d19e788"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Registro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="63" height="10" uuid="0f7c7eca-a197-4bb9-ba54-8b8384d7e23f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="39043aeb-9b8e-4291-aba6-8cb68d19e788"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Folio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="311" y="0" width="63" height="10" forecolor="#969696" uuid="686d3aca-4647-4624-946c-49ddfe999fbc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="39043aeb-9b8e-4291-aba6-8cb68d19e788"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Cancelado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="0" width="63" height="10" uuid="009f62f9-d434-4f99-99e8-2b2c066290d0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5f59387d-aa20-49de-ace3-38ae6e501f2d"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Autorizado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="0" width="63" height="10" uuid="b8ed1d25-10c9-4e6d-ab1b-b3d9bb1dbec6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9a761119-f9d2-468e-bc12-a6ead3628306"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Surtido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="63" height="10" uuid="64d93fca-0592-4232-98b1-29a95c1ab519">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d6342f1c-53e2-4914-bc6c-5686f28718c0"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Recepcionado]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-19" y="11" width="593" height="1" forecolor="#ABABAB" uuid="1ad14053-2ffa-489a-ac7a-6a0929f233c4"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField>
+				<reportElement x="240" y="0" width="62" height="9" uuid="e3ab241e-2650-415b-b4cf-315870f37f30">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c32e61e3-e635-47fe-ad85-8f73db11dfb0"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_pedido_diario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="12" splitType="Stretch">
+			<line>
+				<reportElement x="-19" y="1" width="593" height="1" forecolor="#ABABAB" uuid="e0e0acb4-96dd-4b45-910d-d31efbfa883e"/>
+			</line>
+			<staticText>
+				<reportElement x="453" y="3" width="100" height="9" forecolor="#969696" uuid="ce6fe467-bea4-4b75-9b4c-6c1a7e706dd8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="468c4ed0-3531-41ea-bf89-e0c4bbc69237"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Página         de]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="530" y="3" width="20" height="9" forecolor="#969696" uuid="a8e6565e-5850-4ec7-b55a-92b8364ecbf9"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="498" y="3" width="26" height="9" forecolor="#969696" uuid="01a2b5a9-b6c6-4722-9d70-95bc4ec5772b"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

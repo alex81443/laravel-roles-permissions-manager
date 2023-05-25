@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="suc_dif_ape_cie_inv" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5ac16105-d9da-4e31-9570-09836315c3f8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LaToga.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="171"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="824"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="415"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="577"/>
+	<parameter name="fini" class="java.lang.String">
+		<parameterDescription><![CDATA[fini]]></parameterDescription>
+	</parameter>
+	<parameter name="ffin" class="java.lang.String">
+		<parameterDescription><![CDATA[ffin]]></parameterDescription>
+	</parameter>
+	<parameter name="Sucursal" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="grupo1" class="java.lang.String">
+		<parameterDescription><![CDATA[grupo1]]></parameterDescription>
+	</parameter>
+	<parameter name="grupo2" class="java.lang.String">
+		<parameterDescription><![CDATA[grupo2]]></parameterDescription>
+	</parameter>
+	<parameter name="etiqueta" class="java.lang.String">
+		<parameterDescription><![CDATA[etiqueta]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT			v.*
+FROM				(
+			SELECT				
+										ucase(s.descripcion) AS Sucursal,
+										ape.cat, ape.producto, 
+										ape.dif_ape,
+										ape.dif_cie,
+										ape.dif_ape + ape.dif_cie as dif_tot,
+										'TODAS' as ta,
+										case when $P{grupo1} = 'SUCURSAL' then ucase(s.descripcion) else (case when $P{grupo1} = 'CATEGORIA' then ape.cat else ape.producto end) end as grupo1,
+										case when $P{grupo2} = 'SUCURSAL' then ucase(s.descripcion) else (case when $P{grupo2} = 'CATEGORIA' then ape.cat else ape.producto end) end as grupo2,
+										case when ($P{grupo1} = 'SUCURSAL'  and $P{grupo2} = 'CATEGORIA') or ($P{grupo2} = 'SUCURSAL'  and $P{grupo1} = 'CATEGORIA')  then ape.producto else (
+										case when ($P{grupo1} = 'SUCURSAL'  and $P{grupo2} = 'PRODUCTO') or ($P{grupo2} = 'SUCURSAL'  and $P{grupo1} = 'PRODUCTO')  then ape.cat else (
+										case when ($P{grupo1} = 'PRODUCTO'  and $P{grupo2} = 'CATEGORIA') or ($P{grupo2} = 'PRODUCTO'  and $P{grupo1} = 'CATEGORIA')  then ucase(s.descripcion) else '' end)end)end as detalle,
+										case when ($P{grupo1} = 'SUCURSAL'  and $P{grupo2} = 'CATEGORIA') or ($P{grupo2} = 'SUCURSAL'  and $P{grupo1} = 'CATEGORIA')  then 'PRODUCTO' else (
+										case when ($P{grupo1} = 'SUCURSAL'  and $P{grupo2} = 'PRODUCTO') or ($P{grupo2} = 'SUCURSAL'  and $P{grupo1} = 'PRODUCTO')  then 'CATEGORIA' else (
+										case when ($P{grupo1} = 'PRODUCTO'  and $P{grupo2} = 'CATEGORIA') or ($P{grupo2} = 'PRODUCTO'  and $P{grupo1} = 'CATEGORIA')  then 'SUCURSAL' else '' end)end)end as det_des,
+										ape.id_tip,
+										case when ape.et0_a IS NULL then 0 ELSE ape.et0_a END AS et0_a,
+										case when ape.et1_a IS NULL then 0 ELSE ape.et1_a END AS et1_a,
+										case when ape.et2_a IS NULL then 0 ELSE ape.et2_a END AS et2_a,
+										case when ape.et3_a IS NULL then 0 ELSE ape.et3_a END AS et3_a,
+										case when ape.et4_a IS NULL then 0 ELSE ape.et4_a END AS et4_a,
+										case when ape.et5_a IS NULL then 0 ELSE ape.et5_a END AS et5_a,
+										case when ape.et6_a IS NULL then 0 ELSE ape.et6_a END AS et6_a,
+										case when ape.et7_a IS NULL then 0 ELSE ape.et7_a END AS et7_a,
+										case when ape.et0_c IS NULL then 0 ELSE ape.et0_c END AS et0_c,
+										case when ape.et1_c IS NULL then 0 ELSE ape.et1_c END AS et1_c,
+										case when ape.et2_c IS NULL then 0 ELSE ape.et2_c END AS et2_c,
+										case when ape.et3_c IS NULL then 0 ELSE ape.et3_c END AS et3_c,
+										case when ape.et4_c IS NULL then 0 ELSE ape.et4_c END AS et4_c,
+										case when ape.et5_c IS NULL then 0 ELSE ape.et5_c END AS et5_c,
+										case when ape.et6_c IS NULL then 0 ELSE ape.et6_c END AS et6_c,
+										case when ape.et7_c IS NULL then 0 ELSE ape.et7_c END AS et7_c
+			FROM 					
+										sucursales AS s INNER JOIN (
+										SELECT		a.id_sucursal, d.cat, d.producto, SUM(d.dif_ape) AS dif_ape, SUM(d.dif_cie) AS dif_cie, d.id_tip,
+														sum(case when d.id_etiqueta = 0 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et0_a,
+														sum(case when d.id_etiqueta = 1 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et1_a,
+														sum(case when d.id_etiqueta = 2 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et2_a,
+														sum(case when d.id_etiqueta = 3 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et3_a,
+														sum(case when d.id_etiqueta = 4 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et4_a,
+														sum(case when d.id_etiqueta = 5 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et5_a,
+														sum(case when d.id_etiqueta = 6 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et6_a,
+														sum(case when d.id_etiqueta = 7 AND d.c_ape = 1 then d.dif_ape + d.dif_cie END) AS et7_a,
+														sum(case when d.id_etiqueta = 0 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et0_c,
+														sum(case when d.id_etiqueta = 1 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et1_c,
+														sum(case when d.id_etiqueta = 2 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et2_c,
+														sum(case when d.id_etiqueta = 3 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et3_c,
+														sum(case when d.id_etiqueta = 4 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et4_c,
+														sum(case when d.id_etiqueta = 5 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et5_c,
+														sum(case when d.id_etiqueta = 6 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et6_c,
+														sum(case when d.id_etiqueta = 7 AND d.c_cie = 1 then d.dif_ape + d.dif_cie END) AS et7_c
+										FROM			
+														apertura_suc AS a INNER JOIN
+														(
+																SELECT		v.id_apertura_suc, v.cat, v.producto, SUM(v.Diferencia) as dif_ape, 0 AS dif_cie, v.id_etiqueta, v.id_tip, 1 AS c_ape, 0 AS c_cie
+																FROM		 	vt_rpt_ape_inv_ini AS v
+																WHERE 		NOT (v.Diferencia IS NULL)
+																GROUP BY 	v.id_apertura_suc, v.cat, v.producto, v.id_etiqueta, v.id_tip
+																UNION ALL
+																SELECT		v.id_apertura_suc, v.cat, v.producto, 0 as dif_ape, SUM(v.Diferencia) AS dif_cie, v.id_etiqueta, v.id_tip, 0 AS c_ape, 1 AS c_cie
+																FROM		 	vt_rpt_cie_inv_fin AS v
+																WHERE 		NOT (v.Diferencia IS NULL)
+																GROUP BY 	v.id_apertura_suc, v.cat, v.producto, v.id_etiqueta, v.id_tip) AS d ON d.id_apertura_suc = a.id_apertura_suc
+										WHERE a.fecha BETWEEN $P{fini} AND $P{ffin}
+										GROUP BY 	a.id_sucursal, d.cat, d.producto, d.id_tip) AS ape ON ape.id_sucursal = s.id_sucursal ) as v
+WHERE 	case when $P{Sucursal} = 'TODAS' then v.ta = $P{Sucursal} else v.Sucursal = $P{Sucursal} END
+ORDER BY 		v.grupo1, v.grupo2, v.detalle]]>
+	</queryString>
+	<field name="Sucursal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="Sucursal"/>
+		<property name="com.jaspersoft.studio.field.label" value="Sucursal"/>
+	</field>
+	<field name="cat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cat"/>
+		<property name="com.jaspersoft.studio.field.label" value="cat"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ape"/>
+	</field>
+	<field name="producto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="producto"/>
+		<property name="com.jaspersoft.studio.field.label" value="producto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ape"/>
+	</field>
+	<field name="dif_ape" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dif_ape"/>
+		<property name="com.jaspersoft.studio.field.label" value="dif_ape"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ape"/>
+	</field>
+	<field name="dif_cie" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dif_cie"/>
+		<property name="com.jaspersoft.studio.field.label" value="dif_cie"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ape"/>
+	</field>
+	<field name="dif_tot" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dif_tot"/>
+		<property name="com.jaspersoft.studio.field.label" value="dif_tot"/>
+	</field>
+	<field name="ta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ta"/>
+		<property name="com.jaspersoft.studio.field.label" value="ta"/>
+	</field>
+	<field name="grupo1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="grupo1"/>
+		<property name="com.jaspersoft.studio.field.label" value="grupo1"/>
+	</field>
+	<field name="grupo2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="grupo2"/>
+		<property name="com.jaspersoft.studio.field.label" value="grupo2"/>
+	</field>
+	<field name="detalle" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="detalle"/>
+		<property name="com.jaspersoft.studio.field.label" value="detalle"/>
+	</field>
+	<field name="det_des" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="det_des"/>
+		<property name="com.jaspersoft.studio.field.label" value="det_des"/>
+	</field>
+	<field name="id_tip" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id_tip"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_tip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ape"/>
+	</field>
+	<field name="et0_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et0_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et0_a"/>
+	</field>
+	<field name="et1_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et1_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et1_a"/>
+	</field>
+	<field name="et2_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et2_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et2_a"/>
+	</field>
+	<field name="et3_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et3_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et3_a"/>
+	</field>
+	<field name="et4_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et4_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et4_a"/>
+	</field>
+	<field name="et5_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et5_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et5_a"/>
+	</field>
+	<field name="et6_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et6_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et6_a"/>
+	</field>
+	<field name="et7_a" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et7_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="et7_a"/>
+	</field>
+	<field name="et0_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et0_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et0_c"/>
+	</field>
+	<field name="et1_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et1_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et1_c"/>
+	</field>
+	<field name="et2_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et2_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et2_c"/>
+	</field>
+	<field name="et3_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et3_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et3_c"/>
+	</field>
+	<field name="et4_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et4_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et4_c"/>
+	</field>
+	<field name="et5_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et5_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et5_c"/>
+	</field>
+	<field name="et6_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et6_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et6_c"/>
+	</field>
+	<field name="et7_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="et7_c"/>
+		<property name="com.jaspersoft.studio.field.label" value="et7_c"/>
+	</field>
+	<variable name="dif_ape1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_ape}]]></variableExpression>
+	</variable>
+	<variable name="dif_ape2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group3" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_ape}]]></variableExpression>
+	</variable>
+	<variable name="dif_cie1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group3" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_cie}]]></variableExpression>
+	</variable>
+	<variable name="dif_ape3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group3" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_ape}]]></variableExpression>
+	</variable>
+	<variable name="dif_cie2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group3" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_cie}]]></variableExpression>
+	</variable>
+	<variable name="dif_tot1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group3" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_tot}]]></variableExpression>
+	</variable>
+	<variable name="dif_ape4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group2" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_ape}]]></variableExpression>
+	</variable>
+	<variable name="dif_cie3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group2" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_cie}]]></variableExpression>
+	</variable>
+	<variable name="dif_tot2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group2" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_tot}]]></variableExpression>
+	</variable>
+	<variable name="dif_ape5" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_ape}]]></variableExpression>
+	</variable>
+	<variable name="dif_cie4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_cie}]]></variableExpression>
+	</variable>
+	<variable name="dif_tot3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{dif_tot}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{grupo1}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<rectangle>
+					<reportElement x="-20" y="0" width="595" height="10" forecolor="#FFFFCC" backcolor="#FED300" uuid="28df8f8d-72dd-4b13-b8f1-ece234851d1d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="0" width="370" height="10" uuid="1b65b731-c091-4e48-a88f-cc843e4449f4">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="88001255-e913-4778-9a26-be88310b9927"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<rectangle>
+					<reportElement mode="Opaque" x="380" y="0" width="100" height="10" forecolor="#FFFFCC" backcolor="#C8C8C8" uuid="0f4c5d75-4406-45c0-a4bb-6349d08ddaa9">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="490" y="0" width="70" height="10" forecolor="#FFFFCC" backcolor="#FED300" uuid="be984cc0-00b6-4b8d-92fc-1361d8351523">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="180" y="0" width="190" height="10" uuid="634c142b-f9d7-4b9e-8327-e53eee19a1ac">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="88001255-e913-4778-9a26-be88310b9927"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="380" y="0" width="50" height="10" uuid="bedf7a1e-f34b-469e-8f36-0c39e96dd99f">
+						<printWhenExpression><![CDATA[$V{dif_ape5}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_ape5}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="430" y="0" width="50" height="10" uuid="0a6e6687-d202-407a-aa7d-77dc7e4d7209">
+						<printWhenExpression><![CDATA[$V{dif_cie4}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_cie4}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="500" y="0" width="50" height="10" uuid="1f176700-fd19-4ef0-826b-f5260a8de5ce">
+						<printWhenExpression><![CDATA[$V{dif_tot3}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_tot3}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-20" y="9" width="593" height="1" forecolor="#ABABAB" uuid="51e821cf-3526-49d5-b7b7-5ffc63381133"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group2">
+		<groupExpression><![CDATA[$F{grupo2}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<rectangle>
+					<reportElement x="-20" y="0" width="595" height="10" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="fa5df170-9858-4251-b5b7-d48a2e4e4a0e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="80" y="0" width="290" height="10" uuid="07a138bf-8c70-47c6-84b8-4dab90db58c7"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10">
+				<rectangle>
+					<reportElement mode="Opaque" x="380" y="0" width="100" height="10" forecolor="#FFFFCC" backcolor="#F0F0F0" uuid="c51544b9-b39c-4551-953c-7ed1d1a6d5c0">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="490" y="0" width="70" height="10" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="3a61e0ec-bac3-42ee-9c81-764541bb3c5a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="180" y="0" width="190" height="10" uuid="2280db7c-29b9-4211-986a-1198d3e1b8b2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="380" y="0" width="50" height="10" uuid="0ebe6fba-04ab-42ac-8e2f-18bea0b28db1">
+						<printWhenExpression><![CDATA[$V{dif_ape4}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_ape4}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="430" y="0" width="50" height="10" uuid="db948f10-1942-4d2a-90ae-75a02eb8afd0">
+						<printWhenExpression><![CDATA[$V{dif_cie3}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_cie3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="500" y="0" width="50" height="10" uuid="f8031c95-d3cd-47c4-a33b-c1ae48f5abeb">
+						<printWhenExpression><![CDATA[$V{dif_tot2}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_tot2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group3">
+		<groupExpression><![CDATA[$F{detalle}]]></groupExpression>
+		<groupFooter>
+			<band height="12">
+				<rectangle>
+					<reportElement mode="Opaque" x="380" y="0" width="100" height="12" forecolor="#FFFFCC" backcolor="#F0F0F0" uuid="7b50204b-8db2-4025-9f59-8712d671c5cd">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement mode="Opaque" x="180" y="0" width="190" height="12" backcolor="#F0F0F0" uuid="81904e33-4c89-4c68-bea9-533432ca5c64">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d1c68140-ef86-447f-a83b-d4e17fa2abe2"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{detalle}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="380" y="0" width="50" height="12" uuid="154309c2-65f2-44fe-bba6-538ff207ecd9">
+						<printWhenExpression><![CDATA[$V{dif_ape3}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_ape3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="430" y="0" width="50" height="12" uuid="c453d72d-9b59-4484-b2e7-62f302a6a223">
+						<printWhenExpression><![CDATA[$V{dif_cie2}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_cie2}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="490" y="0" width="70" height="12" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="0901ac7e-2fe1-4f0c-bd0d-83250a4112a8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="500" y="0" width="50" height="12" uuid="c61470ae-b92e-40eb-aebe-e0bb6a4c6440">
+						<printWhenExpression><![CDATA[$V{dif_tot1}.compareTo(BigDecimal.ZERO)!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dif_tot1}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="18">
+				<printWhenExpression><![CDATA[$F{id_tip} == 72 && $P{etiqueta}.startsWith("SI")]]></printWhenExpression>
+				<rectangle>
+					<reportElement x="224" y="0" width="20" height="9" forecolor="#00B3FF" backcolor="#00B3FF" uuid="6f42acef-13d1-4b63-bc9e-c5e6d9fef2fc"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="247" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#FF8800" uuid="73b516a4-b0b7-475e-a5d3-2f31beb559ea"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="268" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#FDAFDD" uuid="dba54811-804c-4888-b4dd-df7528f7b5bf"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="289" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#FF0000" uuid="267da2ff-f5a5-47f5-a1c2-dbe919d3c55b"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="310" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#08FD30" uuid="894bfd7f-c99b-4dc9-8c3f-9a2b4e79e4af"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="331" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#FFFFFF" uuid="7c649caf-38cc-45c4-82c5-15c1a55c6142"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="352" y="0" width="18" height="9" forecolor="#00B3FF" backcolor="#FBFF00" uuid="611cc1d6-00ec-4b6c-986f-f1d2358f5f59"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="224" y="9" width="20" height="9" forecolor="#00B3FF" backcolor="#00B3FF" uuid="4f7e84b9-9b23-4ae2-aae6-6a2f4c82a4a0"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="247" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#FF8800" uuid="7275e8aa-d6cc-4e08-91c4-86ccf9eed995"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="268" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#FDAFDD" uuid="76759332-f2f1-4838-a7bd-c3e329ed9576"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="289" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#FF0000" uuid="28c7db48-7411-412a-b5d7-21436f9b1699"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="310" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#08FD30" uuid="13e0acc6-42d0-475f-9ff4-945c0d334c4e"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="331" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#FFFFFF" uuid="e26fa1c8-feae-4a5a-afe2-0940bbf9ae78"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement x="352" y="9" width="18" height="9" forecolor="#00B3FF" backcolor="#FBFF00" uuid="a3dcaa4f-13e9-40b5-9f18-8e38e9f48468"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement mode="Transparent" x="180" y="0" width="42" height="9" forecolor="#969696" backcolor="#F0F0F0" uuid="cb6bb62f-7be3-40b0-a504-bb78c1e5e8dd">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Apertura]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="180" y="9" width="42" height="9" forecolor="#969696" backcolor="#F0F0F0" uuid="396fcf41-2e24-4e80-81cb-d4cc818b0c6d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="7" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Cierre]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="224" y="0" width="20" height="9" uuid="84f32ddf-8edc-4ca7-86e9-257af566e17c">
+						<printWhenExpression><![CDATA[$F{et1_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et1_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="247" y="0" width="18" height="9" uuid="0928592c-7186-4a91-95d6-a629c85dc512">
+						<printWhenExpression><![CDATA[$F{et2_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et2_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="268" y="0" width="18" height="9" uuid="1e131a96-0372-4e7b-916e-72bee4fa3af3">
+						<printWhenExpression><![CDATA[$F{et3_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et3_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="0" width="18" height="9" uuid="c8eaf86d-f301-45a6-b6a0-5fe9061e0daa">
+						<printWhenExpression><![CDATA[$F{et4_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et4_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="310" y="0" width="18" height="9" uuid="86ad34f0-3e91-4d7f-9972-30e6f2baa8e7">
+						<printWhenExpression><![CDATA[$F{et5_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et5_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="331" y="0" width="18" height="9" uuid="79d7e908-6edf-4551-bfad-77751b026190">
+						<printWhenExpression><![CDATA[$F{et6_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et6_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="352" y="0" width="18" height="9" uuid="c80ad5a6-ff05-4213-a4cf-a7255f87884e">
+						<printWhenExpression><![CDATA[$F{et7_a}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et7_a}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="224" y="9" width="20" height="9" uuid="9d4908b9-9ad6-4658-8355-0bf06dac6764">
+						<printWhenExpression><![CDATA[$F{et1_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et1_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="247" y="9" width="18" height="9" uuid="c69659aa-7d06-4c14-b556-68cd1b6a1ebd">
+						<printWhenExpression><![CDATA[$F{et2_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et2_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="268" y="9" width="18" height="9" uuid="8223496b-0e6b-444f-a912-a4525822412a">
+						<printWhenExpression><![CDATA[$F{et3_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et3_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="9" width="18" height="9" uuid="3abc13bb-5468-4328-acde-968c64570a97">
+						<printWhenExpression><![CDATA[$F{et4_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et4_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="310" y="9" width="18" height="9" uuid="044bb958-9969-4154-939b-398c74a4f530">
+						<printWhenExpression><![CDATA[$F{et5_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et5_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="331" y="9" width="18" height="9" uuid="846dea6c-a5ec-4fb4-984a-1a1629b34179">
+						<printWhenExpression><![CDATA[$F{et6_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et6_c}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="352" y="9" width="18" height="9" uuid="2d84bba6-0ed4-4de4-a650-c347e6e8005b">
+						<printWhenExpression><![CDATA[$F{et7_c}.compareTo(new BigDecimal(0))!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{et7_c}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="61" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="7" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="b6f036b7-a695-4f76-9f0f-260ccab8a65d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="dc7f0ca1-4e0c-48d0-af5b-7177e8a4d718">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="7" width="430" height="16" forecolor="#000000" uuid="762d723e-b3e0-4b3b-870f-86a17e8d10d0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Diferencias en Apertura y Cierre de Inventario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="25" width="50" height="9" uuid="c447311e-c3cd-4632-8071-285789e26987">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="34" width="50" height="9" uuid="d0f7c49f-2114-4b24-acd5-24ed91e9d0b9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha Final]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="43" width="50" height="9" uuid="5c9b7553-8b42-4ec6-aaf4-f7fdb4395a02">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Sucursal]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="43" width="190" height="9" uuid="ee92268b-74ac-4be9-b6c7-491eb0dd267f"/>
+				<textElement textAlignment="Left">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="34" width="100" height="9" uuid="4080a83d-7f9a-4b5c-8e6e-f91bd94ad364"/>
+				<textElement textAlignment="Left">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ffin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="25" width="100" height="9" uuid="99923d0e-8438-4777-99ea-31ae243470cc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fini}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="5" y="-7" width="89" height="44" uuid="fdf99ebe-f4c7-4701-807f-a4b3e484ef3a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://calidad.sistematoga.com/images/logo.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="98" y="52" width="72" height="9" uuid="3653a934-7b09-4b2a-a4ce-6701e5b2697f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Mostrar Etiquetas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="52" width="111" height="9" uuid="428baab0-557b-40d4-8743-96fe081f4ae5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{etiqueta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement x="490" y="0" width="70" height="20" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="24e28c23-ed8a-4f85-8687-742c75706fa1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="380" y="0" width="100" height="10" backcolor="#F0F0F0" uuid="477fd854-a1b3-479a-b420-7bcbf681a28b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIFERENCIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="380" y="10" width="50" height="10" backcolor="#F0F0F0" uuid="b9bc507a-fc7f-4b9f-be03-0671d794b0d7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APERTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="430" y="10" width="50" height="10" backcolor="#F0F0F0" uuid="2777d787-4730-4bc9-8564-005651c0a2df">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CIERRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="50" height="20" uuid="5f3ab558-82f6-41c5-987d-a71dfe34cdd4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="80" height="20" uuid="1d164c9b-d6d6-4857-9723-2dc82a9a202e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{grupo1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="100" height="20" uuid="cd97012b-c03f-4286-905e-efc5c8820c46"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{grupo2}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-20" y="20" width="593" height="1" forecolor="#ABABAB" uuid="cc5f71e5-02e4-44f4-8207-b2dd39a75a10"/>
+			</line>
+			<textField>
+				<reportElement x="180" y="0" width="190" height="20" uuid="13aef62e-7297-4cb5-a579-f3fcd0767bb9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{det_des}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

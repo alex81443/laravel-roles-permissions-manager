@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="operaciones_sucursal" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0deec785-67b9-429d-9182-90acdf0088c1">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LaTogaProduccion"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="214"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="781"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="522"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="470"/>
+	<parameter name="Fecha" class="java.lang.String">
+		<parameterDescription><![CDATA[Fecha]]></parameterDescription>
+	</parameter>
+	<parameter name="Sucursal" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="Turno" class="java.lang.String">
+		<parameterDescription><![CDATA[Turno]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	v.* 
+FROM (
+				SELECT
+				v.orden, v.grupo, v.tipo, v.sucursal, v.turno, v.fecha, 
+				case when v.c_hor = 1 then v.hora ELSE '' END AS hora,
+				sum(v.efe) AS efe,
+				sum(v.tar) AS tar,
+				sum(v.val) AS val,
+				sum(v.cxc) AS cxc,
+				sum(v.tot) AS tot,
+				sum(v.efe_sum) AS efe_sum,
+				sum(v.tar_sum) AS tar_sum,
+				sum(v.val_sum) AS val_sum,
+				sum(v.cxc_sum) AS cxc_sum,
+				sum(v.tot_sum) AS tot_sum,
+				max(v.c_hor) AS c_hor, 
+				v.sec,
+				case when cast(v.tipo AS CHAR) LIKE 'VENTAS' OR cast(v.tipo AS CHAR) LIKE 'P. ESPECIAL' then 'VENTAS DEL DÍA' ELSE '' END AS 'ventas'
+			FROM
+				vt_rpt_ope_suc AS v
+			GROUP BY 
+				v.orden, v.grupo, v.tipo, v.sucursal, v.turno, v.fecha, case when v.c_hor = 1 then v.hora ELSE '' END, v.c_hor) AS v
+WHERE
+	v.fecha = $P{Fecha} and
+	v.sucursal = $P{Sucursal} and
+	v.turno = $P{Turno}
+ORDER BY
+	v.sec, v.orden, v.grupo, v.hora]]>
+	</queryString>
+	<field name="orden" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="orden"/>
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+	</field>
+	<field name="grupo" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="grupo"/>
+		<property name="com.jaspersoft.studio.field.label" value="grupo"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<field name="sucursal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sucursal"/>
+		<property name="com.jaspersoft.studio.field.label" value="sucursal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<field name="turno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="turno"/>
+		<property name="com.jaspersoft.studio.field.label" value="turno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="turnos"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="apertura_suc"/>
+	</field>
+	<field name="hora" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="hora"/>
+		<property name="com.jaspersoft.studio.field.label" value="hora"/>
+	</field>
+	<field name="efe" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="efe"/>
+		<property name="com.jaspersoft.studio.field.label" value="efe"/>
+	</field>
+	<field name="tar" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="tar"/>
+		<property name="com.jaspersoft.studio.field.label" value="tar"/>
+	</field>
+	<field name="val" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="val"/>
+		<property name="com.jaspersoft.studio.field.label" value="val"/>
+	</field>
+	<field name="cxc" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cxc"/>
+		<property name="com.jaspersoft.studio.field.label" value="cxc"/>
+	</field>
+	<field name="tot" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="tot"/>
+		<property name="com.jaspersoft.studio.field.label" value="tot"/>
+	</field>
+	<field name="efe_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="efe_sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="efe_sum"/>
+	</field>
+	<field name="tar_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="tar_sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="tar_sum"/>
+	</field>
+	<field name="val_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="val_sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="val_sum"/>
+	</field>
+	<field name="cxc_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cxc_sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="cxc_sum"/>
+	</field>
+	<field name="tot_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="tot_sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="tot_sum"/>
+	</field>
+	<field name="c_hor" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="c_hor"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_hor"/>
+	</field>
+	<field name="sec" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sec"/>
+		<property name="com.jaspersoft.studio.field.label" value="sec"/>
+	</field>
+	<field name="ventas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ventas"/>
+		<property name="com.jaspersoft.studio.field.label" value="ventas"/>
+	</field>
+	<variable name="efe_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{efe_sum}]]></variableExpression>
+	</variable>
+	<variable name="tar_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{tar_sum}]]></variableExpression>
+	</variable>
+	<variable name="val_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{val_sum}]]></variableExpression>
+	</variable>
+	<variable name="cxc_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{cxc_sum}]]></variableExpression>
+	</variable>
+	<variable name="tot_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{tot_sum}]]></variableExpression>
+	</variable>
+	<variable name="efe_sum2" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{efe_sum}]]></variableExpression>
+	</variable>
+	<variable name="tar_sum2" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{tar_sum}]]></variableExpression>
+	</variable>
+	<variable name="val_sum2" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{val_sum}]]></variableExpression>
+	</variable>
+	<variable name="cxc_sum2" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{cxc_sum}]]></variableExpression>
+	</variable>
+	<variable name="tot_sum2" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{tot_sum}]]></variableExpression>
+	</variable>
+	<variable name="efe1" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{efe}]]></variableExpression>
+	</variable>
+	<variable name="tar1" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{tar}]]></variableExpression>
+	</variable>
+	<variable name="val1" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{val}]]></variableExpression>
+	</variable>
+	<variable name="cxc1" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{cxc}]]></variableExpression>
+	</variable>
+	<variable name="tot1" class="java.math.BigDecimal" resetType="Group" resetGroup="Seccion" calculation="Sum">
+		<variableExpression><![CDATA[$F{tot}]]></variableExpression>
+	</variable>
+	<variable name="efe_sum3" class="java.lang.Double" resetType="Group" resetGroup="ventas" calculation="Sum">
+		<variableExpression><![CDATA[$F{efe_sum}]]></variableExpression>
+	</variable>
+	<variable name="tar_sum3" class="java.lang.Double" resetType="Group" resetGroup="ventas" calculation="Sum">
+		<variableExpression><![CDATA[$F{tar_sum}]]></variableExpression>
+	</variable>
+	<variable name="val_sum3" class="java.lang.Double" resetType="Group" resetGroup="ventas" calculation="Sum">
+		<variableExpression><![CDATA[$F{val_sum}]]></variableExpression>
+	</variable>
+	<variable name="cxc_sum3" class="java.lang.Double" resetType="Group" resetGroup="ventas" calculation="Sum">
+		<variableExpression><![CDATA[$F{cxc_sum}]]></variableExpression>
+	</variable>
+	<variable name="tot_sum3" class="java.lang.Double" resetType="Group" resetGroup="ventas" calculation="Sum">
+		<variableExpression><![CDATA[$F{tot_sum}]]></variableExpression>
+	</variable>
+	<group name="Seccion">
+		<groupExpression><![CDATA[$F{sec}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<rectangle>
+					<reportElement x="0" y="0" width="510" height="14" forecolor="#FAFAFA" backcolor="#FAFAFA" uuid="baabf2f4-3616-4b2e-81cb-7d0119705f28">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="20" y="0" width="220" height="14" uuid="5970f810-58ca-4f7b-8800-e7401f5d9337"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sec}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement x="20" y="0" width="220" height="14" uuid="51b06903-9350-4235-9767-853db68577db"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField pattern="#,#00.00">
+					<reportElement x="340" y="0" width="40" height="14" forecolor="#000000" uuid="8ad9d230-f2ab-43eb-ae77-2456723dbb8b">
+						<printWhenExpression><![CDATA[$V{efe1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{efe1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="380" y="0" width="40" height="14" forecolor="#000000" uuid="7acb7554-e154-4540-ab5e-4eb9a51fa38c">
+						<printWhenExpression><![CDATA[$V{tar1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tar1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="420" y="0" width="40" height="14" forecolor="#000000" uuid="f50031bc-05f0-4cfb-9508-90953cab0480">
+						<printWhenExpression><![CDATA[$V{val1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{val1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="460" y="0" width="40" height="14" forecolor="#000000" uuid="21c9252e-854a-47d7-9e76-168592265f04">
+						<printWhenExpression><![CDATA[$V{cxc1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cxc1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="530" y="0" width="40" height="14" forecolor="#000000" uuid="80289280-c6f7-4c32-9d59-8169f0619107">
+						<printWhenExpression><![CDATA[$V{tot1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tot1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ventas">
+		<groupExpression><![CDATA[$F{ventas}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$F{ventas}.startsWith("VENTAS DEL DÍA")]]></printWhenExpression>
+				<rectangle>
+					<reportElement mode="Opaque" x="90" y="0" width="490" height="14" forecolor="#FFFFCC" backcolor="#E1E1E1" uuid="6089ec72-c58c-45ed-b63f-915e8d61d619">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="100" y="0" width="140" height="14" forecolor="#CC0099" uuid="67901774-5f23-475c-b22d-83673ee3cc31"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ventas}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<printWhenExpression><![CDATA[$F{ventas}.startsWith("VENTAS DEL DÍA")]]></printWhenExpression>
+				<rectangle>
+					<reportElement mode="Opaque" x="340" y="0" width="240" height="10" forecolor="#FFFFCC" backcolor="#E1E1E1" uuid="dd67ad57-c34c-40bd-873e-22584e92ead1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement x="340" y="0" width="40" height="10" forecolor="#CC0099" uuid="1ad518b3-14af-42fa-a8d3-2756c6593dd6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{efe_sum3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement x="380" y="0" width="40" height="10" forecolor="#CC0099" uuid="321a6343-a5e3-43e4-8fe9-0e84ffdda7ed"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tar_sum3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement x="420" y="0" width="40" height="10" forecolor="#CC0099" uuid="aab846ce-922b-42fa-ae4a-8168b1550d46"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{val_sum3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement x="460" y="0" width="40" height="10" forecolor="#CC0099" uuid="33f2287e-23f1-4383-818a-0e8686829095"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{cxc_sum3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement x="530" y="0" width="40" height="10" forecolor="#CC0099" uuid="9960c81e-b9fc-4f18-9a76-d238340f6558"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tot_sum3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="39" splitType="Stretch">
+			<rectangle>
+				<reportElement x="520" y="25" width="60" height="14" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="5108dbd8-a032-4b56-8b75-79285becebde">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="330" y="25" width="180" height="14" forecolor="#FAFAFA" backcolor="#FAFAFA" uuid="3c2e4d26-8d8b-4dd2-9be2-a8fb21bf9ca3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="595" height="18" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="edd9266f-7e9a-4071-9e5f-168d4d6f6830">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="20" y="0" width="300" height="18" uuid="3bdf50f8-a66f-4dd7-aeb9-acfe85657501">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[OPERACIONES DE LA SUCURSAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="530" y="25" width="40" height="14" uuid="a1784b93-f0ff-4edf-98b1-525ce8906eb5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="25" width="40" height="14" forecolor="#6F6F6F" uuid="905c582a-19f7-4c1d-8c2f-20e7de422537"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CxC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="25" width="40" height="14" forecolor="#6F6F6F" uuid="258c09c2-9461-4ef4-8e1f-34e7dd5478e8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Vales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="25" width="40" height="14" forecolor="#6F6F6F" uuid="b3a157b6-6722-4219-8804-985b969312a6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tarjeta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="25" width="40" height="14" forecolor="#6F6F6F" uuid="a03a670b-5aee-499b-9dd5-a613c83ed9df"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Efectivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="25" width="40" height="14" uuid="0f3e50c4-1394-4347-8709-81dab15b572b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="25" width="220" height="14" uuid="5e1c2d56-74c8-4b24-abc5-2740b997d5f6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de Operación]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10">
+			<printWhenExpression><![CDATA[$F{grupo}==1 || ($F{grupo} == 2 && $F{tot} > 0) || $F{grupo}==3]]></printWhenExpression>
+			<textField>
+				<reportElement x="20" y="0" width="220" height="10" uuid="ed2497df-daaf-473e-8f8f-0da45a383b92"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="0" width="40" height="10" uuid="fe95222e-e497-4030-85f9-76cb1f3f35af">
+					<printWhenExpression><![CDATA[$F{c_hor}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="340" y="0" width="40" height="10" forecolor="#6F6F6F" uuid="d756d866-6f3c-4c0c-8d8f-1cc7503a3ffa">
+					<printWhenExpression><![CDATA[$F{efe} != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{efe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="380" y="0" width="40" height="10" forecolor="#6F6F6F" uuid="874b111e-f632-4eca-87da-31dcc84fdfc0">
+					<printWhenExpression><![CDATA[$F{tar} != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="420" y="0" width="40" height="10" forecolor="#6F6F6F" uuid="25604ba3-d3d7-47e9-aac5-9bddb9a91398">
+					<printWhenExpression><![CDATA[$F{val} != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{val}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="460" y="0" width="40" height="10" forecolor="#6F6F6F" uuid="637fc3d8-6c4a-45eb-bbe6-1829fa8261bd">
+					<printWhenExpression><![CDATA[$F{cxc} != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cxc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="530" y="0" width="40" height="10" forecolor="#6F6F6F" uuid="7c2e0a18-b004-4210-bd98-e4f31f6f0e51">
+					<printWhenExpression><![CDATA[$F{tot} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tot}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="25">
+			<rectangle>
+				<reportElement x="520" y="6" width="60" height="14" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="07969d4d-7450-4a2c-b1cc-881d717b39bd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="330" y="6" width="180" height="14" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="276be623-72ff-4352-aa9a-242fef1df9f3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="20" y="6" width="220" height="14" uuid="a3d88b11-8a27-4619-b5eb-8c84d9d42c7a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DIFERENCIAS]]></text>
+			</staticText>
+			<textField pattern="#,#00.00#;(#,#00.00#)">
+				<reportElement x="340" y="6" width="40" height="14" forecolor="#6F6F6F" uuid="b7fb00e7-6cee-4b12-9259-8eed43cca5ee">
+					<printWhenExpression><![CDATA[$V{efe_sum1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{efe_sum1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="380" y="6" width="40" height="14" forecolor="#6F6F6F" uuid="12ab1a90-676a-4fbe-8f16-6bd74be1590e">
+					<printWhenExpression><![CDATA[$V{tar_sum1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tar_sum1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="420" y="6" width="40" height="14" forecolor="#6F6F6F" uuid="0ae344d1-e2d9-4615-8d28-dcdac0bb7d23">
+					<printWhenExpression><![CDATA[$V{val_sum1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{val_sum1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="460" y="6" width="40" height="14" forecolor="#6F6F6F" uuid="d9e2197d-2c95-41f2-88e9-fbaeb85827e1">
+					<printWhenExpression><![CDATA[$V{cxc_sum1}.compareTo(new BigDecimal("0.00")) != 0 ||
+$V{cxc_sum1}.compareTo(new BigDecimal("0.00")) > 0 ||
+$V{cxc_sum1}.compareTo(new BigDecimal("0.00")) < 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cxc_sum1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00#;(#,#00.00#)">
+				<reportElement x="530" y="6" width="40" height="14" uuid="3e018c02-07fc-4be7-b44a-edb8c0597f5e">
+					<printWhenExpression><![CDATA[$V{tot_sum1}.compareTo(new BigDecimal("0.00")) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tot_sum1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

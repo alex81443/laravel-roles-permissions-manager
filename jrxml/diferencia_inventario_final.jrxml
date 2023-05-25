@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="diferencia_inventario_final" language="javascript" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="14881665-68b7-401e-9e58-ca4c5e88b4f7">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="802"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="188"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="312"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="683"/>
+	<parameter name="id_apertura_suc" class="java.lang.Long">
+		<parameterDescription><![CDATA[id_apertura_suc]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	DIF.id_apertura_suc, cat.descripcion AS cat, DIF.descripcion AS producto, DIF.id_etiqueta,
+	case when e.descripcion = 'SIN ASIGNAR' then '' else e.descripcion end AS etiqueta,
+	case when DIF.fec_cad = '19000101' then '-' else DIF.fec_cad END AS fec_cad,
+	case when DIF.ANT = 0 then '-' ELSE CAST(DIF.ANT AS CHAR) END AS ANT,
+	case when DIF.ACT = 0 then '-' ELSE CAST(DIF.ACT AS CHAR) END AS ACT,
+	cast(ABS(DIF.DIF)as char) AS Diferencia,
+	case when DIF.DIF > 0 then cast(ABS(DIF.DIF) as CHAR) ELSE '-' END AS 'ENT',
+	case when DIF.DIF < 0 then cast(ABS(DIF.DIF) as CHAR) ELSE '-' END AS 'SAL'
+FROM (
+			SELECT 
+				A.id_apertura_suc, A.id_pro, A.descripcion, A.id_etiqueta, A.fec_cad, 
+				SUM(case when A.Tipo = 'ANT' then A.can ELSE 0 END) AS ANT,
+				SUM(case when A.Tipo = 'ACT' then A.can ELSE 0 END) AS ACT,
+				SUM(case when A.Tipo = 'ACT' then A.can ELSE 0 END) - SUM(case when A.Tipo = 'ANT' then A.can ELSE 0 END) AS DIF
+			FROM (
+			/*ACTUAL*/
+			Select
+			'ACT' AS Tipo, inv_act.* FROM (
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 1 AS id_etiqueta, iniD.fec_cad, iniD.etq1 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 2 AS id_etiqueta, iniD.fec_cad, iniD.etq2 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 3 AS id_etiqueta, iniD.fec_cad, iniD.etq3 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 4 AS id_etiqueta, iniD.fec_cad, iniD.etq4 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 5 AS id_etiqueta, iniD.fec_cad, iniD.etq5 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 6 AS id_etiqueta, iniD.fec_cad, iniD.etq6 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 7 AS id_etiqueta, iniD.fec_cad, iniD.etq7 AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 72
+						UNION ALL
+						SELECT
+							ap.id_apertura_suc, p.id_pro, p.descripcion, 0 AS id_etiqueta, iniD.fec_cad, iniD.cant AS can
+						FROM
+							apertura_suc as ap INNER JOIN 
+							inventarios AS ini ON ini.id_inventario = ap.id_inventario_fin INNER JOIN 
+							inventarios_det AS iniD ON iniD.id_inventario = ini.id_inventario INNER JOIN 
+							productos AS p ON p.id_pro = iniD.id_pro
+						WHERE
+							p.id_tip_cad = 73) AS inv_act
+			UNION ALL
+			/*ANTERIOR*/
+			SELECT 'ANT' AS Tipo, inv_ant.* FROM (
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 1 AS id_etiqueta, finD.fec_cad, finD.etq1 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 2 AS id_etiqueta, finD.fec_cad, finD.etq2 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 3 AS id_etiqueta, finD.fec_cad, finD.etq3 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 4 AS id_etiqueta, finD.fec_cad, finD.etq4 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 5 AS id_etiqueta, finD.fec_cad, finD.etq5 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 6 AS id_etiqueta, finD.fec_cad, finD.etq6 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 7 AS id_etiqueta, finD.fec_cad, finD.etq7 AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 72
+					UNION ALL
+					SELECT
+						ap.id_apertura_suc, p.id_pro, p.descripcion, 0 AS id_etiqueta, finD.fec_cad, finD.cant AS can
+					FROM
+						apertura_suc as ap INNER JOIN 
+						inventarios AS fin ON fin.id_inventario = ap.id_inventario_ini INNER JOIN 
+						inventarios_det AS finD ON finD.id_inventario = fin.id_inventario INNER JOIN 
+						productos AS p ON p.id_pro = finD.id_pro
+					WHERE
+						p.id_tip_cad = 73
+			/*MOVIMIENTOS DEL DÍA */
+						UNION ALL
+						/*VENTAS */
+						SELECT
+							a.id_apertura_suc, d.id_producto, p.descripcion,
+							case when p.id_tip_cad = 72 then d.id_etiqueta ELSE 0 END AS id_etiqueta, 
+							case when p.id_tip_cad = 73 then d.fec_cad ELSE CAST('19000101' as DATE) END AS fec_cad, d.cantidad * -1 as can
+						FROM
+							nota_venta AS e INNER JOIN
+							nota_venta_det AS d ON e.id_nota_venta = d.id_nota_venta INNER JOIN
+							apertura_suc AS a ON a.id_sucursal = e.id_sucursal AND a.id_turno = e.id_turno AND a.fecha = e.fecha INNER JOIN
+							productos AS p ON d.id_producto = p.id_pro
+						WHERE 
+							e.id_estatus IN (1,2)
+							/*MERMAS */
+						UNION ALL
+						SELECT 
+								a.id_apertura_suc, e.id_producto, p.descripcion,
+								case when p.id_tip_cad = 72 then e.id_etiqueta ELSE 0 END AS id_etiqueta,
+								case when p.id_tip_cad = 73 then e.fec_cad ELSE CAST('19000101' as DATE) END AS fec_cad,  -1 AS cantidad
+						FROM
+								mermas AS e INNER JOIN
+								apertura_suc AS a ON a.id_sucursal = e.id_sucursal AND a.id_turno = e.id_turno AND a.fecha = e.fec_foto INNER JOIN
+								productos AS p ON e.id_producto = p.id_pro
+							/*RECEPCIÓN DE MERCANCÍA */
+						UNION ALL
+						SELECT
+								a.id_apertura_suc, p.id_pro, p.descripcion,
+								case when p.id_tip_cad = 72 then d.id_etiqueta ELSE 0 END AS id_etiqueta,
+								case when p.id_tip_cad = 73 then d.fecha ELSE CAST('19000101' as DATE) END AS fec_cad, d.cantidad
+							FROM
+								mercancias AS e INNER JOIN
+								mercancia_det AS d ON e.id_mercancia = d.id_mercancia AND d.id_estatus = 1 JOIN
+								apertura_suc AS a ON a.id_sucursal = e.id_sucursal AND a.id_turno = e.id_turno AND a.fecha = CAST(d.fec_reg AS DATE) INNER JOIN
+								productos AS p ON d.id_pro = p.id_pro
+							WHERE
+								e.id_estatus = 4
+							/*DEVOLUCIONES */
+							UNION ALL
+							SELECT 
+								a.id_apertura_suc, d.id_pro_lleva, p.descripcion,
+								case when p.id_tip_cad = 72 then d.id_etq_lleva ELSE 0 END AS id_etiqueta,
+								CAST('19000101' as DATE) AS fec_cad,  -1 AS cantidad
+							FROM
+								devoluciones AS e INNER JOIN
+								devoluciones_det AS d ON e.id_devolucion = d.id_devolucion INNER JOIN
+								apertura_suc AS a ON a.id_sucursal = e.id_sucursal AND a.id_turno = e.id_turno AND a.fecha = CAST(d.fec_reg AS DATE) INNER JOIN
+								productos AS p ON d.id_pro_lleva = p.id_pro
+							UNION ALL
+							/*TRASPASOS */
+							SELECT 
+									t.id_apertura_suc, t.id_pro, t.descripcion, t.id_etiqueta, t.fec_cad, MAX(t.can) AS can
+							FROM (
+									SELECT
+										k.id_kardex,
+										a.id_apertura_suc, p.id_pro, p.descripcion,
+										case when p.id_tip_cad = 72 then k.id_etiqueta ELSE 0 END AS id_etiqueta,
+										case when p.id_tip_cad = 73 then k.fec_cad ELSE CAST('19000101' as DATE) END AS fec_cad,
+										k.cantidad * k.tipo_saldo AS can
+									FROM
+										traspasos AS e INNER JOIN
+										traspasos_det AS d ON e.id_traspaso = d.id_traspaso INNER JOIN
+										kardex AS k ON e.id_entidad = k.id_entidad AND k.id_doc = e.id_traspaso INNER JOIN
+										almacenes AS al ON al.id_almacen = k.id_almacen INNER JOIN 
+										sucursales AS s ON s.id_sucursal = al.id_sucursal INNER JOIN 
+										apertura_suc AS a ON s.id_sucursal = a.id_sucursal AND a.id_turno = e.id_turno AND a.fecha = k.fecha INNER JOIN
+										productos AS p ON k.id_pro = p.id_pro
+									WHERE
+										k.cantidad <> 0) AS t
+							GROUP BY
+								t.id_kardex, t.id_apertura_suc, t.id_pro, t.descripcion, t.id_etiqueta, t.fec_cad
+						/*REBANADO */
+						UNION ALL
+							SELECT
+								a.id_apertura_suc, p.id_pro, p.descripcion, 
+								case when p.id_tip_cad = 72 then k.id_etiqueta ELSE 0 END AS id_etiqueta,
+								case when p.id_tip_cad = 73 then k.fec_cad ELSE CAST('19000101' as DATE) END AS fec_cad,
+								k.cantidad * k.tipo_saldo AS can
+							FROM 
+								promociones as e INNER JOIN 
+								promociones_det AS d ON e.id_promocion = d.id_promocion INNER JOIN
+								kardex AS k ON k.id_doc = e.id_promocion INNER JOIN
+								apertura_suc AS a ON e.id_sucursal = a.id_sucursal AND a.fecha = k.fecha INNER JOIN
+								productos AS p ON k.id_pro = p.id_pro
+							WHERE
+								e.id_estatus = 1 AND
+								k.id_entidad = 61 AND
+								k.id_tip_doc IN (6,7) AND
+								d.tip_promo = 2
+						
+						
+						) AS inv_ant) AS A 
+			GROUP BY
+				A.id_apertura_suc, A.id_pro, A.descripcion, A.id_etiqueta, A.fec_cad) AS DIF INNER JOIN
+	productos AS p ON p.id_pro = DIF.id_pro INNER JOIN 
+	categorias AS cat ON cat.id_categoria = p.id_categoria LEFT JOIN 
+	etiquetas AS e ON e.id_etiqueta = DIF.id_etiqueta	
+WHERE
+	DIF.id_apertura_suc = $P{id_apertura_suc} AND
+	DIF.DIF <> 0
+ORDER BY
+	cat.descripcion, DIF.descripcion, DIF.id_etiqueta]]>
+	</queryString>
+	<field name="id_apertura_suc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_apertura_suc"/>
+	</field>
+	<field name="cat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cat"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="producto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="producto"/>
+	</field>
+	<field name="id_etiqueta" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_etiqueta"/>
+	</field>
+	<field name="etiqueta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="etiqueta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="etiquetas"/>
+	</field>
+	<field name="fec_cad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fec_cad"/>
+	</field>
+	<field name="ANT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ANT"/>
+	</field>
+	<field name="ACT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ACT"/>
+	</field>
+	<field name="Diferencia" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="Diferencia"/>
+	</field>
+	<field name="ENT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ENT"/>
+	</field>
+	<field name="SAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SAL"/>
+	</field>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{cat}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement x="20" y="0" width="324" height="18" uuid="de112883-0aa3-400e-a688-0f4bc1c5a29a">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cat}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="100" y="19" width="130" height="22" uuid="3c935c3b-8f48-440a-9f42-d7b2472d4683">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[PRODUCTO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="0" width="595" height="19" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="b77e1e0b-94ed-46c2-b911-1e4d73ca0b4f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="20" y="0" width="575" height="19" uuid="9bfaeda6-e1a1-4c86-8173-35f6c8509cab">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[DIFERENCIAS EN EL INVENTARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="19" width="80" height="22" uuid="023957ab-a4ed-474f-a3b1-116c4ab176cf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[CATEGORÍA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="19" width="59" height="22" uuid="7c48a4f8-c42c-4b5f-bb57-a0745def82bc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[CADUCIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="496" y="19" width="70" height="11" uuid="aae5155d-527f-46ff-9d11-a485ef4b5e61">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AJUSTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="531" y="30" width="35" height="11" uuid="2e413b3e-cd47-4f55-8fa1-f74b56453f8f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Salida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="496" y="30" width="35" height="11" uuid="0d40994a-6df5-42d2-bca8-d55759bb3269">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Entrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="19" width="49" height="22" uuid="6ce9903c-8b65-40df-b389-b6ee3caa2cdd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[DIFERENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="19" width="70" height="11" uuid="84c3cfbb-629f-4c86-ae13-2c50127c170c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INVENTARIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="30" width="35" height="11" uuid="8d9f0f1b-1ae2-40c7-8c36-b14535e5485f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sistema]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="391" y="30" width="35" height="11" uuid="5b55aec1-915f-4630-b379-c65ea65fb23a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Captura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="19" width="56" height="22" uuid="8c19c8e8-cb5e-4bec-b0dd-2584fd08629a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[ETIQUETA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="41" width="593" height="1" forecolor="#ABABAB" uuid="324eac1b-90ba-40a7-a276-a9f4f37b0545"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="100" y="0" width="130" height="12" uuid="c4345530-ce02-4c16-aeee-a55cbe4b27bd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="0" width="58" height="12" uuid="aaa8acd9-8954-4dac-ba19-86742f60e339">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fc61d11e-1d5c-4cc7-802c-7e0a5838ef26"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_cad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="356" y="0" width="35" height="12" uuid="829b1f5e-1c55-497b-9c8c-4fdcd821d2e5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="42d0135d-f8d6-4920-b952-8dbfb899e916"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="391" y="0" width="35" height="12" uuid="81759894-4b13-463f-86c4-0cc263fa6813">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="34ed7b8c-da2f-4f0d-abf3-949fbe3737de"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="0" width="49" height="12" uuid="92fdcb26-7ef8-42bf-ae82-0f506d3721a7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="aef8b57d-a750-4bab-a526-817c4308c0c4"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Diferencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="496" y="0" width="35" height="12" uuid="d9f466b9-b821-4300-98d9-c13247b35d2e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6a735221-80b1-40cf-aa8c-364cfa7289a6"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="531" y="0" width="35" height="12" uuid="262698fb-1f07-4ec8-a619-f72425bcf308">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9e85ab82-5901-4aa8-a2eb-017be950427c"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAL}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#00B3FF" uuid="ed28ef8a-60cf-44ca-864c-c3d13858359e">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 1]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#FF8800" uuid="17ac4391-0686-42fe-8572-921414a9f81d">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 2]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#FDAFDD" uuid="c50f9cdd-a718-4b90-899e-25d0915ce0c1">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 3]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#FF0000" uuid="42667613-e16e-45d9-a13f-db66d67dde40">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 4]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#08FD30" uuid="94f63ea9-d6c6-4cf1-9e62-db6b38019d00">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 5]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#FFFFFF" uuid="f1b07414-e183-4ceb-9607-d5582c13b9d0">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 6]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="288" y="0" width="57" height="11" forecolor="#00B3FF" backcolor="#FBFF00" uuid="7ab79e6d-02aa-473f-94fc-7f8ea0c3d5dd">
+					<printWhenExpression><![CDATA[$F{id_etiqueta} == 7]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement mode="Transparent" x="288" y="0" width="57" height="12" backcolor="#00B3FF" uuid="de1c6cab-b6d4-4928-b0a4-d5f3ecd50031">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0dd44953-1118-4e17-971c-f7a0907c60db"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{etiqueta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

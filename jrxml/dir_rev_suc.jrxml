@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dir_rev_suc" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="387a6e93-c30e-40b4-b642-c496a2c56f17">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<parameter name="Nivel" class="java.lang.String">
+		<parameterDescription><![CDATA[Nivel]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+		1 AS orden, 'VENTAS' AS tipo, 
+		c.descripcion AS grupo,
+		p.descripcion as subgrupo,
+		p.total * (case when e.total = 0 then 0 else d.total / e.total END) AS total,
+		p.EFECTIVO * (case when e.total = 0 then 0 else d.total / e.total END) AS EFECTIVO,
+		p.TARJETA * (case when e.total = 0 then 0 else d.total / e.total END) AS TARJETA,
+		p.VALE * (case when e.total = 0 then 0 else d.total / e.total END) AS VALE,
+		p.CxC * (case when e.total = 0 then 0 else d.total / e.total END) AS CxC, e.fecha
+FROM
+		nota_venta AS e INNER JOIN
+		nota_venta_det AS d ON e.id_nota_venta = d.id_nota_venta INNER JOIN 
+		productos AS p ON d.id_producto = p.id_pro INNER JOIN 
+		categorias AS c ON p.id_categoria = c.id_categoria LEFT JOIN (
+					SELECT
+							a.id_nota_venta,
+							SUM(a.total) AS Total, 
+							SUM(case when b.id_tip_pago = 8 then a.total ELSE 0 END) AS 'EFECTIVO',
+							SUM(case when b.id_tip_pago = 9 then a.total ELSE 0 END) AS 'TARJETA',
+							SUM(case when b.id_tip_pago = 10 then a.total ELSE 0 END) AS 'VALE',
+							SUM(case when b.id_tip_pago = 13 then a.total ELSE 0 END) AS 'CXC'
+					FROM
+							nota_venta_met_pago AS a INNER JOIN 
+							metodos_pago AS b ON a.id_metodo_pago = b.id_metodo_pago
+					GROUP BY
+							a.id_nota_venta) AS p ON p.id_nota_venta = e.id_nota_venta
+WHERE 
+		c.no_venta = 0 AND
+		e.id_sucursal = 2 AND e.fecha >= '20220125' AND e.fecha <= '20220127']]>
+	</queryString>
+	<field name="orden" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<field name="grupo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="grupo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="subgrupo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="subgrupo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="productos"/>
+	</field>
+	<field name="total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
+	<field name="EFECTIVO" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="EFECTIVO"/>
+	</field>
+	<field name="TARJETA" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="TARJETA"/>
+	</field>
+	<field name="VALE" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="VALE"/>
+	</field>
+	<field name="CxC" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="CxC"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nota_venta"/>
+	</field>
+	<variable name="EFECTIVO1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{EFECTIVO}]]></variableExpression>
+	</variable>
+	<variable name="TARJETA1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARJETA}]]></variableExpression>
+	</variable>
+	<variable name="VALE1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALE}]]></variableExpression>
+	</variable>
+	<variable name="CxC1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{CxC}]]></variableExpression>
+	</variable>
+	<variable name="EFECTIVO2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{EFECTIVO}]]></variableExpression>
+	</variable>
+	<variable name="total1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="CxC2" class="java.math.BigDecimal" resetType="Group" resetGroup="Tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CxC}]]></variableExpression>
+	</variable>
+	<variable name="VALE2" class="java.math.BigDecimal" resetType="Group" resetGroup="Tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALE}]]></variableExpression>
+	</variable>
+	<variable name="CxC3" class="java.math.BigDecimal" resetType="Group" resetGroup="subgrupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CxC}]]></variableExpression>
+	</variable>
+	<variable name="VALE3" class="java.math.BigDecimal" resetType="Group" resetGroup="subgrupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALE}]]></variableExpression>
+	</variable>
+	<variable name="TARJETA2" class="java.math.BigDecimal" resetType="Group" resetGroup="subgrupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARJETA}]]></variableExpression>
+	</variable>
+	<variable name="EFECTIVO3" class="java.math.BigDecimal" resetType="Group" resetGroup="subgrupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{EFECTIVO}]]></variableExpression>
+	</variable>
+	<variable name="total2" class="java.math.BigDecimal" resetType="Group" resetGroup="subgrupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<variable name="TARJETA3" class="java.math.BigDecimal" resetType="Group" resetGroup="Tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARJETA}]]></variableExpression>
+	</variable>
+	<variable name="EFECTIVO4" class="java.math.BigDecimal" resetType="Group" resetGroup="Tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{EFECTIVO}]]></variableExpression>
+	</variable>
+	<variable name="total3" class="java.math.BigDecimal" resetType="Group" resetGroup="Tipo" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<group name="Tipo">
+		<groupExpression><![CDATA[$F{tipo}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="1" y="0" width="179" height="20" uuid="392def6e-7b8e-472e-a4d1-5ad5f9a6b761">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3d1d2773-a2e9-47a6-8b94-cfe5e4a47ca9"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,#00.00">
+					<reportElement x="454" y="0" width="61" height="20" uuid="e02eb8ed-570d-4bee-8830-45e138a241e0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CxC2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="393" y="0" width="61" height="20" uuid="4c42c914-dee9-4a1c-8b16-96dcb5c612c6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALE2}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="1" y="0" width="179" height="20" uuid="c85fa9b7-9fa3-495d-9cb9-e80c3b369d2f">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3d1d2773-a2e9-47a6-8b94-cfe5e4a47ca9"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="332" y="0" width="61" height="20" uuid="a24c2844-bc2b-4cdd-8a1b-08063aff97dd"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARJETA3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="271" y="0" width="61" height="20" uuid="159e05fe-fac3-4080-9b3e-a728a172f127"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{EFECTIVO4}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="180" y="0" width="62" height="20" uuid="7295b31b-4110-4c08-aff8-f39076e6c944"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total3}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{grupo}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="10" y="0" width="170" height="20" uuid="f09843bc-4bf9-46f3-9694-1215e95c1d1e">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="709f6c1c-fdc2-474d-9172-26ccd40541a2"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{grupo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,#00.00">
+					<reportElement x="271" y="0" width="61" height="20" uuid="5a7bbb11-3b34-4412-9b40-716d829107c2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{EFECTIVO1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="332" y="0" width="61" height="20" uuid="756ec9a8-119f-4c58-85e0-975c3c3add91"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARJETA1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="393" y="0" width="61" height="20" uuid="1d6d600b-122f-4f94-906d-875cf49f5daa"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALE1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="454" y="0" width="61" height="20" uuid="36b69849-86c6-4b35-8e55-63e227313e7a"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CxC1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="0" width="170" height="20" uuid="f80561d0-f86b-496a-970e-360ee7792902">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="709f6c1c-fdc2-474d-9172-26ccd40541a2"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{grupo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="180" y="0" width="62" height="20" uuid="91b3c047-eaad-4bc4-8b6f-03407113409c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="subgrupo">
+		<groupExpression><![CDATA[$F{subgrupo}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{Nivel}.equals("3")]]></printWhenExpression>
+				<textField>
+					<reportElement x="20" y="0" width="160" height="20" forecolor="#969696" uuid="277cbb1c-4f34-49c5-b348-08567ac2488c"/>
+					<textFieldExpression><![CDATA[$F{subgrupo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="454" y="0" width="61" height="20" forecolor="#969696" uuid="80efa169-2edd-4213-b91e-2433000caa75"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CxC3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="393" y="0" width="61" height="20" forecolor="#969696" uuid="c045bb37-589b-4195-a162-26c7ddc0d827"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VALE3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="332" y="0" width="61" height="20" forecolor="#969696" uuid="f8542fda-d5ca-42bc-bced-e8814e548471"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TARJETA2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="271" y="0" width="61" height="20" forecolor="#969696" uuid="d0732d0f-44e2-4ee4-afbc-5fed75d0d945"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{EFECTIVO3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00">
+					<reportElement x="180" y="0" width="62" height="20" forecolor="#969696" uuid="306922e1-2d1f-4609-982c-fe6484866d4c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="39" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="7" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="7b8f40bd-b47f-4942-a1a8-6eb2ad20005c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="e206626e-8458-41ca-8ea3-17716f599d80">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="5" width="452" height="17" forecolor="#000000" uuid="78bfe5e2-d416-4f4a-ba76-f08ae46aee2f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Ventas de Sucursal]]></text>
+			</staticText>
+			<image>
+				<reportElement x="-5" y="-8" width="103" height="47" uuid="99d0f770-7172-44cb-8255-5d417357fb3d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://sistematoga.com/images/logo_la_toga.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="110" y="26" width="100" height="13" uuid="e37e8216-a43c-4f9e-9369-59257177cad0"/>
+				<textFieldExpression><![CDATA[$P{Nivel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="180" y="0" width="62" height="20" uuid="ce751cc4-fa7c-4690-adcd-aa2311e25e83">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b6063b79-eeb3-4cdd-a253-86ad762930d9"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="62" height="20" uuid="7a1651ce-472b-4643-b877-f26baead574c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b4b463e8-c058-4646-8a75-1b3365f96a2f"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EFECTIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="332" y="0" width="61" height="20" uuid="2d7dcc0e-22c7-4da7-bc10-b9fa40ec1d3b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="38f61ac1-f5ed-4235-aa6e-c087bfafc40b"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TARJETA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="454" y="0" width="61" height="20" uuid="719ac191-0200-423c-8c70-b28e0931bced">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d4302da2-5001-42eb-93eb-7f73c16799a5"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CxC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="0" width="61" height="20" uuid="8c9f1a06-1ea7-42a3-92ee-9731bdae9c67">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3eb5c5ee-6a21-45c8-a1b1-751f40d8337a"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{Nivel}.equals("4")]]></printWhenExpression>
+			<textField pattern="#,#00.00">
+				<reportElement x="180" y="0" width="62" height="20" forecolor="#CC33FF" uuid="1cf251d2-bbd0-4eea-a626-c95b130ba846">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b6063b79-eeb3-4cdd-a253-86ad762930d9"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="271" y="0" width="61" height="20" forecolor="#CC33FF" uuid="f5962553-a499-48d0-a927-ab5dc276e36d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b4b463e8-c058-4646-8a75-1b3365f96a2f"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EFECTIVO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="332" y="0" width="61" height="20" forecolor="#CC33FF" uuid="f747b582-2022-4533-af7d-9ca4b0c33aef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="38f61ac1-f5ed-4235-aa6e-c087bfafc40b"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TARJETA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="454" y="0" width="61" height="20" forecolor="#CC33FF" uuid="fd5c7527-6ad2-476f-a954-d6e6863fda74">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d4302da2-5001-42eb-93eb-7f73c16799a5"/>
+					<printWhenExpression><![CDATA[$F{CxC}!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CxC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="393" y="0" width="61" height="20" forecolor="#CC33FF" uuid="52c5f9e6-3e37-4f89-be79-476f9e617aed">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3eb5c5ee-6a21-45c8-a1b1-751f40d8337a"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="150" height="20" forecolor="#CC33FF" uuid="211a75ad-14ef-45f7-bb4e-692de4f17aa5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b4a6a8ee-31ef-4bb0-bd6e-ef26d97c6187"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{subgrupo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="28" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="31" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="26" splitType="Stretch"/>
+	</summary>
+</jasperReport>

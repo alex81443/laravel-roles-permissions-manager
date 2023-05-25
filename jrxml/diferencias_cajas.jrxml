@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="diferencias_cajas" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0deec785-67b9-429d-9182-90acdf0088c1">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<parameter name="id_apertura_suc" class="java.lang.Long">
+		<parameterDescription><![CDATA[id_apertura_suc]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	aac.id_apertura_suc, 
+	cac.total_billetes + cac.total_monedas + cac.total_otros AS caj_apertura,
+	can.total_billetes + can.total_monedas + can.total_otros AS caj_cie_ant,
+	ABS((cac.total_billetes + cac.total_monedas + cac.total_otros) - (can.total_billetes + can.total_monedas + can.total_otros)) AS dif
+FROM
+	apertura_suc as aac INNER JOIN
+	apertura_suc AS aan ON aan.id_apertura_suc = aac.ape_ant INNER JOIN 
+	cajas AS cac ON cac.id_caja = aac.id_caja_ini INNER JOIN
+	cajas AS can ON can.id_caja = aan.id_caja_fin
+WHERE
+	aac.id_apertura_suc = $P{id_apertura_suc}]]>
+	</queryString>
+	<field name="id_apertura_suc" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_apertura_suc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="apertura_suc"/>
+	</field>
+	<field name="caj_apertura" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="caj_apertura"/>
+	</field>
+	<field name="caj_cie_ant" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="caj_cie_ant"/>
+	</field>
+	<field name="dif" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="dif"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="450" y="0" width="90" height="20" uuid="fb66e745-84fd-46ce-afec-9249878393a5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Cierre Anterior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="20" width="90" height="20" uuid="16f0786d-86f4-412a-b879-1b3fbec877aa"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Diferencia]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="540" y="0" width="40" height="20" uuid="8f75d264-dedb-45e1-b5f5-f3ea2fc5e93c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caj_cie_ant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="20" width="40" height="20" uuid="662e9690-6489-43fb-9f92-afc80a7495b5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dif}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="suc_val_cli" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3fc5cfe-71a9-40f4-8abf-51666cee7d5b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<parameter name="FecIni" class="java.lang.String">
+		<parameterDescription><![CDATA[FecIni]]></parameterDescription>
+	</parameter>
+	<parameter name="FecFin" class="java.lang.String">
+		<parameterDescription><![CDATA[FecFin]]></parameterDescription>
+	</parameter>
+	<parameter name="Sucursal" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="Vale" class="java.lang.String">
+		<parameterDescription><![CDATA[Vale]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select a.* from (
+				SELECT
+					date_format(v.fec_reg,'%d/%m/%Y') AS fecha, s.descripcion AS suc,
+					t.descripcion AS turno,
+					ucase(u.usuario) AS usu,
+					v.codigo AS vale,
+					case when d.valor_vale IS NULL then 0 ELSE d.valor_vale END AS valor_vale,
+					case when v.id_estatus = 3 then 'APLICADO' ELSE 'VIGENTE' END AS sts_vale,
+					'TODAS' AS ts, 'TODOS' AS tv
+				FROM
+					vales AS v INNER JOIN 
+					sucursales AS s ON s.id_sucursal = v.id_sucursal INNER JOIN 
+					turnos AS t ON t.id_turno = v.id_turno INNER JOIN 
+					usuarios AS u ON u.id_usuario = v.id_usuario LEFT JOIN 
+					devoluciones_det AS d ON d.id_codigo_vale = v.id_vale
+				WHERE
+					cast(v.fec_reg AS DATE) between $P{FecIni} and $P{FecFin}) as a 
+where
+	case when $P{Sucursal} = 'TODAS' then a.ts = $P{Sucursal} else a.suc = $P{Sucursal} end and
+	case when $P{Vale} = 'TODOS' then a.tv = $P{Vale} else a.sts_vale = $P{Vale} end
+order by 
+	a.suc, a.fecha]]>
+	</queryString>
+	<field name="fecha" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	</field>
+	<field name="suc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="suc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<field name="turno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="turno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="turnos"/>
+	</field>
+	<field name="usu" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="usu"/>
+	</field>
+	<field name="vale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vales"/>
+	</field>
+	<field name="valor_vale" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="valor_vale"/>
+	</field>
+	<field name="sts_vale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="sts_vale"/>
+	</field>
+	<field name="ts" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ts"/>
+	</field>
+	<field name="tv" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tv"/>
+	</field>
+	<variable name="valor_vale1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_vale}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{suc}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<rectangle>
+					<reportElement x="-20" y="0" width="595" height="10" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="d0e9ede3-4a10-4d1d-bfec-b49aee092233">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="1" y="0" width="178" height="10" uuid="22bbec87-efa2-4222-a47c-d03513a5ab9d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{suc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField pattern="#,#00.00">
+					<reportElement x="427" y="0" width="68" height="18" uuid="aa0abe67-5d28-4e1c-8788-ee9a3d069547"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{valor_vale1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="55" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="7" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="c7d69ce0-f75d-4ab8-abb3-cf7fb8fa9b1a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="5c9e966c-1370-43ea-b7f9-56a68a14725e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="7" width="452" height="17" forecolor="#000000" uuid="bac7624a-e91a-4fee-9e41-cf679dcdd927"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Vales a Clientes por Sucursal]]></text>
+			</staticText>
+			<image>
+				<reportElement x="-5" y="-8" width="103" height="47" uuid="53bf351a-e94f-4101-a987-73a59b3dd02f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://sistematoga.com/images/logo_la_toga.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="110" y="23" width="170" height="10" uuid="22f5fc7a-b8d0-4037-8ee0-1231e93ac7d3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sucursal:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="24" width="120" height="9" uuid="0cf5610d-74c4-49cd-b289-a30007868c92"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Sucursal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="118" y="33" width="170" height="10" uuid="c2f08a9c-4b99-4993-881b-f125f0dc894a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha: Del                     al ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="152" y="33" width="40" height="10" uuid="e1465c77-d208-41ee-b53c-07a0372bd1b9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FecIni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="33" width="90" height="10" uuid="1f6f2439-5c09-4dcf-84f7-40f7e4420537"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FecFin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="140" y="43" width="110" height="10" uuid="c4aa9f6a-a79c-454a-b382-e113863c8d69"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Vale}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="120" y="43" width="160" height="10" uuid="d3463db3-06d8-4955-a776-08c27de578a9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[ Vale:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<line>
+				<reportElement x="-19" y="10" width="593" height="1" forecolor="#ABABAB" uuid="99c1e834-8a2b-4f1a-abd2-63a3f3cac24e"/>
+			</line>
+			<staticText>
+				<reportElement x="508" y="0" width="52" height="10" uuid="0253fe45-dd5c-4d34-8215-a408ca6a77d6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estatus Vale]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="0" width="68" height="10" uuid="98ba894e-53d5-49ec-a334-ef2d60179382">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="0" width="60" height="10" uuid="903fdc81-5b94-420d-948d-ac3d74b11dba">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vale]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="208" y="0" width="120" height="10" uuid="fe0d1a38-5a36-48ca-9caf-902b6181cc8b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="90" height="10" uuid="cd3b49da-fcfd-4f03-9847-1ec186757319">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Turno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="0" width="50" height="10" uuid="95af41ac-b6dc-4cee-a608-68b7039a5499">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2b2e22d-1413-4b8b-8c6d-6d6d157a9844"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="0" width="50" height="9" uuid="4814115c-3840-4d50-9f8e-bdbbddcb5603">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bf5588d2-d67c-4673-9ab1-d647a85a2a23"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="90" height="9" uuid="817bc498-dca1-4d82-9203-4006dd42a965">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dddbe351-f4c1-4099-a7eb-271160f3e51b"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="208" y="0" width="120" height="9" uuid="4fb2f407-4410-4284-8437-d8e693704e2e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="60af7af2-64f4-46ce-909a-8a4f791d6dbe"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usu}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="354" y="0" width="60" height="9" uuid="2cbc8c91-87cf-4efc-916b-09cd92ea09aa">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e2881786-b3d8-4409-8da0-09432f3a71aa"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vale}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00">
+				<reportElement x="427" y="0" width="68" height="9" uuid="d62abeff-069b-4de4-a7ed-9d902fe6ef18">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ec1fc356-629a-4484-9f9c-49d2b112cfa6"/>
+					<printWhenExpression><![CDATA[$F{valor_vale}.compareTo(BigDecimal.ZERO) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_vale}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="508" y="0" width="52" height="9" uuid="d480a066-1bea-47c7-ad9b-dbc5bc74d206">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5b9324d8-b236-4460-b8df-0a6c8831c4b6"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sts_vale}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="6" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

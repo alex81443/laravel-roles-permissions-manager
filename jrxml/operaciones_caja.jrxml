@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="operaciones_caja" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0deec785-67b9-429d-9182-90acdf0088c1">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="214"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="781"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="681"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="309"/>
+	<parameter name="id_sucursal" class="java.lang.Long">
+		<parameterDescription><![CDATA[id_sucursal]]></parameterDescription>
+	</parameter>
+	<parameter name="TURNO" class="java.lang.String">
+		<parameterDescription><![CDATA[TURNO]]></parameterDescription>
+	</parameter>
+	<parameter name="Fecha" class="java.lang.String">
+		<parameterDescription><![CDATA[Fecha]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT * FROM (
+				SELECT
+				'A' AS orden, 'APERTURA' AS TIPO,
+				ap.id_sucursal, ap.TURNO, ap.fecha, ap.HORA,
+				SUM(ap.EFECTIVO) AS 'EFECTIVO', SUM(ap.TARJETA) AS 'TARJETA', SUM(ap.VALE) AS 'VALE', SUM(ap.CxC) AS 'CxC', SUM(ap.total) AS 'TOTAL',
+				SUM(ap.EFECTIVO) AS 'EFECTIVO_sum',SUM(ap.TARJETA) AS 'TARJETA_sum', SUM(ap.VALE) AS 'VALE_sum', SUM(ap.CxC) AS 'CxC_sum', SUM(ap.total) AS 'TOTAL_sum'
+			FROM (
+						SELECT
+							e.id_sucursal, t.descripcion AS TURNO,
+							e.fecha as fecha, DATE_FORMAT(a.fec_caja_ini,'%H:%i') AS HORA,
+							case when d.id_tip_pad IN (53,60) then d.monto ELSE 0 END AS 'EFECTIVO',
+							case when d.id_tip = 68 then d.monto ELSE 0 END AS 'TARJETA',
+							case when d.id_tip = 69 then d.monto ELSE 0 END AS 'VALE',
+							case when d.id_tip = 70 then d.monto ELSE 0 END AS 'CxC',
+							d.monto AS TOTAL
+						FROM
+							apertura_suc AS a INNER JOIN 
+							cajas AS e ON a.id_caja_ini = e.id_caja INNER JOIN
+							cajas_det AS d ON e.id_caja = d.id_caja INNER JOIN 
+							turnos AS t ON e.id_turno = t.id_turno
+						WHERE
+							a.id_sucursal = $P{id_sucursal} and
+							t.descripcion = $P{TURNO} and
+							e.fecha = $P{Fecha}) AS ap
+			GROUP BY
+				ap.id_sucursal, ap.TURNO, ap.fecha
+			UNION ALL
+			SELECT
+				'B' AS orden, 'VENTAS' AS TIPO,
+				v.id_sucursal, v.TURNO,
+				v.fecha, v.HORA,
+				SUM(v.EFECTIVO) AS 'EFECTIVO', SUM(v.TARJETA) AS 'TARJETA', SUM(v.VALE) AS 'VALE', SUM(v.CxC) AS 'CxC', SUM(v.total) AS 'TOTAL',
+				SUM(v.EFECTIVO) AS 'EFECTIVO_sum', SUM(v.TARJETA) AS 'TARJETA_sum', SUM(v.VALE) AS 'VALE_sum', SUM(v.CxC) AS 'CxC_sum',SUM(v.total) AS 'TOTAL_sum'
+			FROM (
+					SELECT
+						e.id_sucursal, tu.descripcion AS TURNO, e.fecha,
+						'' as HORA,
+						case when t.id_tip IN(8,12,77) then d.total ELSE 0 END AS 'EFECTIVO',
+						case when t.id_tip IN(9) then d.total ELSE 0 END AS 'TARJETA',
+						case when t.id_tip IN(10,11) then d.total ELSE 0 END AS 'VALE',
+						case when t.id_tip IN(13,76) then d.total ELSE 0 END AS 'CxC', d.total
+					FROM
+						nota_venta AS e INNER JOIN
+						nota_venta_met_pago AS d ON e.id_nota_venta = d.id_nota_venta INNER JOIN 
+						metodos_pago AS pag ON pag.id_metodo_pago = d.id_metodo_pago INNER JOIN 
+						sis_tip AS t ON t.id_tip = pag.id_tip_pago INNER JOIN 
+						turnos AS tu ON e.id_turno = tu.id_turno
+					WHERE
+						e.id_estatus = 2 AND 
+						d.id_estatus = 1 AND
+						e.id_sucursal = $P{id_sucursal} AND 
+						tu.descripcion = $P{TURNO} and
+						e.fecha = $P{Fecha}) AS v
+			GROUP BY
+				v.id_sucursal, v.TURNO, v.fecha
+			UNION ALL
+			/*PEDIDOS ESPECIALES */
+			SELECT
+				v.ORDEN, v.TIPO,
+				v.id_sucursal, v.TURNO,
+				v.fecha, v.HORA,
+				SUM(v.EFECTIVO) AS 'EFECTIVO', SUM(v.TARJETA) AS 'TARJETA', SUM(v.VALE) AS 'VALE', SUM(v.CxC) AS 'CxC', SUM(v.total) AS 'TOTAL',
+				SUM(v.EFECTIVO) AS 'EFECTIVO_sum', SUM(v.TARJETA) AS 'TARJETA_sum', SUM(v.VALE) AS 'VALE_sum', SUM(v.CxC) AS 'CxC_sum',SUM(v.total) AS 'TOTAL_sum'
+			FROM (
+					
+					SELECT
+						d.id_sucursal, tu.descripcion AS TURNO, d.fecha,
+						'' as HORA,
+						case when t.id_tip IN(8,12,77) then d.total ELSE 0 END AS 'EFECTIVO',
+						case when t.id_tip IN(9) then d.total ELSE 0 END AS 'TARJETA',
+						case when t.id_tip IN(10,11) then d.total ELSE 0 END AS 'VALE',
+						case when t.id_tip IN(13,76) then d.total ELSE 0 END AS 'CxC', d.total,
+						case when d.id_sucursal = e.id_sucursal AND d.base = 0 then 'P. ESPECIAL' ELSE (
+							case when d.id_sucursal = e.id_sucursal and d.base = 1 then 'DEG PED. ESPECIAL' ELSE (
+								case when d.id_sucursal <> e.id_sucursal AND d.base = 0 then 'P. ESPECIAL EXT' ELSE 'DEG P. ESPECIAL EXT' END) END) END AS TIPO,
+						case when d.id_sucursal = e.id_sucursal AND d.base = 0 then 'B1' ELSE (
+							case when d.id_sucursal = e.id_sucursal and d.base = 1 then 'B2' ELSE (
+								case when d.id_sucursal <> e.id_sucursal AND d.base = 0 then 'B3' ELSE 'B4' END) END) END AS ORDEN
+					FROM
+						nota_venta AS e INNER JOIN
+						nota_venta_met_pago AS d ON e.id_nota_venta = d.id_nota_venta INNER JOIN 
+						metodos_pago AS pag ON pag.id_metodo_pago = d.id_metodo_pago INNER JOIN 
+						sis_tip AS t ON t.id_tip = pag.id_tip_pago INNER JOIN 
+						turnos AS tu ON d.id_turno = tu.id_turno
+					WHERE
+						e.id_estatus IN (1,2) AND
+						d.id_sucursal = $P{id_sucursal} AND
+						tu.descripcion = $P{TURNO} and
+						d.fecha = $P{Fecha}) AS v
+			GROUP BY
+				v.id_sucursal, v.TURNO, v.fecha, v.TIPO, v.ORDEN
+			UNION ALL
+			SELECT
+				'C' AS orden, 'CORTE' AS TIPO,
+				c.id_sucursal, c.TURNO,
+				c.fecha, 
+				c.HORA,
+				SUM(c.EFECTIVO) AS 'EFECTIVO',
+				SUM(c.TARJETA) AS 'TARJETA',
+				SUM(c.VALE) AS 'VALE',
+				SUM(c.CxC) AS 'CxC',
+				SUM(c.TOTAL) AS 'TOTAL',
+				SUM(c.EFECTIVO) * -1 AS 'EFECTIVO_sum',
+				SUM(c.TARJETA) * -1 AS 'TARJETA_sum',
+				SUM(c.VALE) * -1 AS 'VALE_sum',
+				SUM(c.CxC) * -1 AS 'CxC_sum',
+				SUM(c.TOTAL) * -1 AS 'TOTAL_sum'
+			FROM (
+					SELECT
+						e.id_corte,	e.id_sucursal, t.descripcion AS TURNO, e.fecha,
+						DATE_FORMAT(e.hora,'%H:%i') as HORA,
+						case when d.id_tip_pad IN (53,60) then d.monto ELSE 0 END AS 'EFECTIVO',
+						case when d.id_tip = 68 then d.monto ELSE 0 END AS 'TARJETA',
+						case when d.id_tip = 69 then d.monto ELSE 0 END AS 'VALE',
+						case when d.id_tip = 70 then d.monto ELSE 0 END AS 'CxC',
+						d.monto AS TOTAL
+					FROM
+						cortes AS e INNER JOIN
+						cortes_det AS d ON e.id_corte = d.id_corte INNER JOIN 
+						turnos AS t ON e.id_turno = t.id_turno
+					WHERE
+						e.id_sucursal = $P{id_sucursal} AND
+						t.descripcion = $P{TURNO} and
+						e.fecha = $P{Fecha}) AS c
+			GROUP BY
+				c.id_corte, c.id_sucursal, c.TURNO, c.fecha, c.hora
+			UNION ALL
+				SELECT
+				'D' AS orden, 'CIERRE' AS TIPO,
+				ap.id_sucursal, ap.TURNO, 
+				ap.fecha, ap.HORA,
+				SUM(ap.EFECTIVO) AS 'EFECTIVO', SUM(ap.TARJETA) AS 'TARJETA', SUM(ap.VALE) AS 'VALE', SUM(ap.CxC) AS 'CxC', SUM(ap.total) AS 'TOTAL',
+				SUM(ap.EFECTIVO) * -1 AS 'EFECTIVO_sum', SUM(ap.TARJETA) * -1 AS 'TARJETA_sum', SUM(ap.VALE) * -1 AS 'VALE_sum', SUM(ap.CxC) * -1 AS 'CxC_sum', SUM(ap.total) * -1 AS 'TOTAL_sum'
+			FROM (
+						SELECT
+							e.id_sucursal, t.descripcion AS TURNO, e.fecha, DATE_FORMAT(a.fec_caja_fin,'%H:%i') AS HORA,
+							case when d.id_tip_pad IN (53,60) then d.monto ELSE 0 END AS 'EFECTIVO',
+							case when d.id_tip = 68 then d.monto ELSE 0 END AS 'TARJETA',
+							case when d.id_tip = 69 then d.monto ELSE 0 END AS 'VALE',
+							case when d.id_tip = 70 then d.monto ELSE 0 END AS 'CxC',
+							d.monto AS TOTAL
+						FROM
+							apertura_suc AS a INNER JOIN 
+							cajas AS e ON a.id_caja_fin = e.id_caja INNER JOIN
+							cajas_det AS d ON e.id_caja = d.id_caja INNER JOIN 
+							turnos AS t ON e.id_turno = t.id_turno
+						WHERE
+							a.id_sucursal = $P{id_sucursal} and
+							t.descripcion = $P{TURNO} and
+							e.fecha = $P{Fecha}) AS ap
+			GROUP BY
+				ap.id_sucursal, ap.TURNO, ap.fecha
+				
+				
+				
+				UNION ALL
+				SELECT
+					v.Orden, v.Tipo, v.id_sucursal, v.TURNO, v.fecha, v.hora,
+					SUM(v.EFECTIVO) AS EFECTIVO, 0 AS TARJETA, 0 AS VALE, 0 AS CXC, SUM(v.EFECTIVO) AS TOTAL,
+					SUM(v.EFECTIVO) * -1 AS EFECTIVO_sum, 0 AS TARJETA_sum, 0 AS VALE_sum, 0 AS CXC_sum, SUM(v.EFECTIVO) * -1 AS TOTAL_sum
+				FROM (
+						SELECT
+							'E' AS Orden, 'DEV. EFECTIVO' AS Tipo, e.id_sucursal, t.descripcion AS TURNO, cast(e.fec_reg AS DATE) AS fecha, '' AS hora,
+							case when d.monto_dev IS NULL then 0 ELSE d.monto_dev END AS EFECTIVO
+						FROM
+							devoluciones AS e INNER JOIN
+							devoluciones_det AS d ON e.id_devolucion = d.id_devolucion INNER JOIN
+							turnos AS t ON e.id_turno = t.id_turno
+						) AS v
+				WHERE
+					v.EFECTIVO <> 0 and
+					v.id_sucursal = $P{id_sucursal} and
+					v.TURNO = $P{TURNO} and
+					v.fecha = $P{Fecha}
+				GROUP BY
+						v.id_sucursal, v.TURNO, v.fecha) AS c
+ORDER BY
+	c.orden, c.HORA]]>
+	</queryString>
+	<field name="orden" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+	</field>
+	<field name="TIPO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TIPO"/>
+	</field>
+	<field name="id_sucursal" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_sucursal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="apertura_suc"/>
+	</field>
+	<field name="TURNO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TURNO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="turnos"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="apertura_suc"/>
+	</field>
+	<field name="HORA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="HORA"/>
+	</field>
+	<field name="EFECTIVO" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="EFECTIVO"/>
+	</field>
+	<field name="TARJETA" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="TARJETA"/>
+	</field>
+	<field name="VALE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VALE"/>
+	</field>
+	<field name="CxC" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="CxC"/>
+	</field>
+	<field name="TOTAL" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL"/>
+	</field>
+	<field name="EFECTIVO_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="EFECTIVO_sum"/>
+	</field>
+	<field name="TARJETA_sum" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="TARJETA_sum"/>
+	</field>
+	<field name="VALE_sum" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="VALE_sum"/>
+	</field>
+	<field name="CxC_sum" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="CxC_sum"/>
+	</field>
+	<field name="TOTAL_sum" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL_sum"/>
+	</field>
+	<variable name="TOTAL_sum1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_sum}]]></variableExpression>
+	</variable>
+	<variable name="EFECTIVO_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{EFECTIVO_sum}]]></variableExpression>
+	</variable>
+	<variable name="TARJETA_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{TARJETA_sum}]]></variableExpression>
+	</variable>
+	<variable name="VALE_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALE_sum}]]></variableExpression>
+	</variable>
+	<variable name="CxC_sum1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{CxC_sum}]]></variableExpression>
+	</variable>
+	<group name="Orden">
+		<groupExpression><![CDATA[$F{orden}]]></groupExpression>
+	</group>
+	<group name="TIPO">
+		<groupExpression><![CDATA[$F{TIPO}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="41" splitType="Stretch">
+			<rectangle>
+				<reportElement x="520" y="19" width="43" height="22" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="5108dbd8-a032-4b56-8b75-79285becebde">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="340" y="19" width="170" height="22" forecolor="#FAFAFA" backcolor="#FAFAFA" uuid="3c2e4d26-8d8b-4dd2-9be2-a8fb21bf9ca3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="595" height="18" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="edd9266f-7e9a-4071-9e5f-168d4d6f6830">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="20" y="0" width="300" height="18" uuid="3bdf50f8-a66f-4dd7-aeb9-acfe85657501">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[OPERACIONES DE LA SUCURSAL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="39" width="593" height="1" forecolor="#ABABAB" uuid="d64fab72-b0f6-46f0-b5e7-48ee5562b3ca"/>
+			</line>
+			<staticText>
+				<reportElement x="521" y="20" width="40" height="19" uuid="a1784b93-f0ff-4edf-98b1-525ce8906eb5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="20" width="40" height="19" uuid="905c582a-19f7-4c1d-8c2f-20e7de422537"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CxC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="20" width="40" height="19" uuid="258c09c2-9461-4ef4-8e1f-34e7dd5478e8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Vales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="20" width="40" height="19" uuid="b3a157b6-6722-4219-8804-985b969312a6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tarjeta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="20" width="40" height="19" uuid="a03a670b-5aee-499b-9dd5-a613c83ed9df"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Efectivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="20" width="40" height="19" uuid="0f3e50c4-1394-4347-8709-81dab15b572b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[HORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="21" width="120" height="19" uuid="0afac38e-7b73-4aac-9b83-73c103e76009"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10">
+			<textField>
+				<reportElement x="140" y="0" width="120" height="10" uuid="7945648e-3520-499d-931b-6cd5e821c652"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="0" width="40" height="10" uuid="925ff0b8-9dcc-432e-a092-a595c6255b90"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="340" y="0" width="40" height="10" uuid="2ad2787f-a073-4367-a3a1-a27fe31afece"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EFECTIVO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="40" height="10" uuid="a904176a-bbdb-4d08-b83e-f0c4f1887a3d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TARJETA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="0" width="40" height="10" uuid="c4258014-08cd-41b1-960e-6e1ac5a55c9c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="40" height="10" uuid="9529cde1-dacc-4248-888f-aabcaa5ac280"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CxC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="520" y="0" width="40" height="10" uuid="2fbd8efb-b633-4c81-9d4d-814335f935e1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="33">
+			<rectangle>
+				<reportElement x="520" y="7" width="43" height="22" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="07969d4d-7450-4a2c-b1cc-881d717b39bd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="340" y="6" width="170" height="22" forecolor="#FAFAFA" backcolor="#FAFAFA" uuid="276be623-72ff-4352-aa9a-242fef1df9f3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="521" y="7" width="40" height="22" uuid="d98e07d4-fa41-4b30-b5c5-c6e5fb52b96a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_sum1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="260" y="6" width="40" height="22" uuid="a3d88b11-8a27-4619-b5eb-8c84d9d42c7a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Diferencias]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="340" y="6" width="40" height="21" uuid="162eb5da-8dd7-49bf-9f99-b7fdb33e9c50"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{EFECTIVO_sum1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="7" width="39" height="20" uuid="0061b3b4-f835-4c12-aad1-98291b2dc06d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TARJETA_sum1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="419" y="7" width="40" height="20" uuid="a6fa046a-4f84-4e00-bc4d-73e5a3c03799"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VALE_sum1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="7" width="40" height="20" uuid="f4378a75-27b7-48e9-bee7-e607949bdfa3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CxC_sum1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

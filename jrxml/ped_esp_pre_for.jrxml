@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ped_esp_pre_for" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ca665ada-3105-429f-ae8f-d55a81412d19">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LaToga.jrdax"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="760"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="230"/>
+	<parameter name="Formato" class="java.lang.String">
+		<parameterDescription><![CDATA[Formato]]></parameterDescription>
+	</parameter>
+	<parameter name="Formas" class="java.lang.String">
+		<parameterDescription><![CDATA[Formas]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT 		v.*, ucase(t.des) AS tipo, CONCAT('DE ',CAST(r.rango_inicial AS CHAR),' A ',CAST(r.rango_final AS CHAR)) AS rango
+FROM 			(
+				SELECT			v.id_forma, v.nom_forma, v.pre_def_forma,
+									MAX(v.niveles) AS niveles,
+									v.nivel, v.cve_molde, v.molde, v.cve_pan, v.pan,
+									MAX(v.precio_pan) AS precio_pan,
+									MAX(case when cast(v.Tipo AS CHAR) = 'COBERTURA' then v.cve_cobertura_relleno ELSE '' END) AS cve_cobertura,
+									MAX(case when cast(v.Tipo AS CHAR) = 'COBERTURA' then v.cobertura_relleno ELSE '' END) AS cobertura,
+									MAX(v.precio_cobertura) AS precio_cobertura,
+									MAX(case when cast(v.Tipo AS CHAR) = 'RELLENO' then v.cve_cobertura_relleno ELSE '' END) AS cve_relleno,
+									MAX(case when cast(v.Tipo AS CHAR) = 'RELLENO' then v.cobertura_relleno ELSE '' END) AS relleno,
+									MAX(v.precio_relleno) AS precio_relleno,
+ 									(MAX(v.precio_pan) + MAX(v.precio_cobertura) + MAX(v.precio_relleno)) AS precio_nivel, 'TODOS' as TODOS
+				FROM				vt_rpt_for_mol_pan_cob_rell AS v
+				WHERE 			v.def_forma = 1 AND v.cob_rell_default = 1
+				GROUP BY			v.id_forma, v.nom_forma, v.pre_def_forma,v.nivel, v.cve_molde, v.molde, v.cve_pan, v.pan, 'TODOS'
+				) AS v INNER JOIN 
+				formas AS f ON f.id_forma = v.id_forma INNER JOIN 
+				sis_tip AS t ON t.id_tip = f.forma INNER JOIN 
+				rangos AS r ON r.id_rango = f.id_rango
+where				case when $P{Formas} = 'TODOS' then v.TODOS = $P{Formas} else ucase(t.des) = $P{Formas} end
+ORDER BY		v.id_forma, v.nivel]]>
+	</queryString>
+	<field name="id_forma" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_forma"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_forma"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="nom_forma" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nom_forma"/>
+		<property name="com.jaspersoft.studio.field.label" value="nom_forma"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="pre_def_forma" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pre_def_forma"/>
+		<property name="com.jaspersoft.studio.field.label" value="pre_def_forma"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="niveles" class="java.math.BigInteger">
+		<property name="com.jaspersoft.studio.field.name" value="niveles"/>
+		<property name="com.jaspersoft.studio.field.label" value="niveles"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="nivel" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="nivel"/>
+		<property name="com.jaspersoft.studio.field.label" value="nivel"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="cve_molde" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cve_molde"/>
+		<property name="com.jaspersoft.studio.field.label" value="cve_molde"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="moldes"/>
+	</field>
+	<field name="molde" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="molde"/>
+		<property name="com.jaspersoft.studio.field.label" value="molde"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="moldes"/>
+	</field>
+	<field name="cve_pan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cve_pan"/>
+		<property name="com.jaspersoft.studio.field.label" value="cve_pan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="panes"/>
+	</field>
+	<field name="pan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pan"/>
+		<property name="com.jaspersoft.studio.field.label" value="pan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="panes"/>
+	</field>
+	<field name="precio_pan" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="precio_pan"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_pan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="cve_cobertura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cve_cobertura"/>
+		<property name="com.jaspersoft.studio.field.label" value="cve_cobertura"/>
+	</field>
+	<field name="cobertura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cobertura"/>
+		<property name="com.jaspersoft.studio.field.label" value="cobertura"/>
+	</field>
+	<field name="precio_cobertura" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="precio_cobertura"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_cobertura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="cve_relleno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cve_relleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="cve_relleno"/>
+	</field>
+	<field name="relleno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="relleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="relleno"/>
+	</field>
+	<field name="precio_relleno" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="precio_relleno"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_relleno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vt_rpt_for_mol_pan_cob_rell"/>
+	</field>
+	<field name="precio_nivel" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="precio_nivel"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_nivel"/>
+	</field>
+	<field name="TODOS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TODOS"/>
+		<property name="com.jaspersoft.studio.field.label" value="TODOS"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<field name="rango" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rango"/>
+		<property name="com.jaspersoft.studio.field.label" value="rango"/>
+	</field>
+	<variable name="precio_cobertura1" class="java.math.BigDecimal" resetType="Group" resetGroup="nivel" calculation="Sum">
+		<variableExpression><![CDATA[$F{precio_cobertura}]]></variableExpression>
+	</variable>
+	<group name="Forma">
+		<groupExpression><![CDATA[$F{id_forma}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<rectangle>
+					<reportElement mode="Opaque" x="-20" y="0" width="595" height="9" backcolor="rgba(232, 232, 232, 0.9607843)" uuid="c20d5f3c-07af-47b0-8524-ced91009418a">
+						<printWhenExpression><![CDATA[$P{Formato}.equals("NIVELES") || $P{Formato}.equals("DETALLE") ]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="0" y="0" width="152" height="9" uuid="8f6436a9-d40e-4382-b461-a5230f2ab580"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nom_forma}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="286" y="0" width="34" height="9" uuid="3ae776e7-4f6a-4644-8cd4-8bee75d1f0e4"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{niveles}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00;(#,#00.00)">
+					<reportElement x="356" y="0" width="64" height="9" uuid="0f4258d9-053b-45d9-ac5b-d2cc09a536dd"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pre_def_forma}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="152" y="0" width="62" height="9" uuid="4895f3f3-2c41-4190-a78e-d907d805b5cc"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="214" y="0" width="72" height="9" uuid="9157b372-a787-47e3-81d8-d2ea49165856"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{rango}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="nivel">
+		<groupExpression><![CDATA[$F{nivel}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<printWhenExpression><![CDATA[$P{Formato}.equals("NIVELES") || $P{Formato}.equals("DETALLE") ]]></printWhenExpression>
+				<textField>
+					<reportElement x="10" y="0" width="26" height="10" uuid="4091e7a8-fbac-4c87-a760-5edd7eaf2366"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nivel}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="0" width="176" height="10" uuid="55aac957-9f50-4b28-9fc5-49b28b9744ae"/>
+					<textElement textAlignment="Left">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{molde}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="36" y="0" width="74" height="10" uuid="69958714-d4cc-40be-a4be-4f6aed833a0a"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cve_molde}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,#00.00;(-#,#00.00)">
+					<reportElement x="356" y="0" width="64" height="10" uuid="297a1bad-2f44-4ace-a03c-f4871b6050f5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{precio_nivel}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="85" splitType="Stretch">
+			<image>
+				<reportElement x="-20" y="-20" width="595" height="105" uuid="5cdc8408-baa3-4f27-9fdb-74696743a5cb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://calidad.sistematoga.com/images/toga_encabezado_reporte.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1" y="2" width="125" height="67" uuid="54f4a6f6-d269-414e-bf71-6e5a58d328d2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://calidad.sistematoga.com/images/LA_TOGA_LOGO.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="110" y="-11" width="449" height="21" uuid="bf7a087b-301d-406a-8776-5f5c9a265b8e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRECIOS DE FORMAS PARA PEDIDO ESPECIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="10" width="69" height="11" forecolor="#CC0099" uuid="b950ea61-794e-4484-8260-85af0459ccc6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Tipo de Formas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="21" width="69" height="11" uuid="cbe45953-45c1-4ee8-a994-050bbc242489">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Formato]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="450" y="10" width="109" height="11" forecolor="#CC0099" uuid="701b363b-7c2c-46b5-bc56-390b4432146a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Formas}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-20" y="84" width="595" height="1" forecolor="#ABABAB" uuid="7bb689d9-fe1f-4099-a13b-02ecd08913bf"/>
+			</line>
+			<textField>
+				<reportElement x="450" y="21" width="109" height="11" uuid="4bfefc30-52ae-4ce1-90e9-bb33eb07474f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Formato}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="152" height="11" uuid="2869385d-6412-4fb7-952b-a9afa1fbb5bc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE FORMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="286" y="1" width="34" height="11" uuid="8ca2ad27-f05e-4b92-851c-e42ac5c39dac">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIVELES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="1" width="64" height="11" uuid="e8e86c9b-7bc2-4fdc-ae3a-651b50b4d070">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRECIO DEFAULT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="1" width="62" height="11" uuid="f39b9388-19ae-48d4-8839-1fb7950d454c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="214" y="1" width="72" height="11" uuid="6669bef0-cb2a-45ea-8f44-deecde0ec3df">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RANGO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-20" y="17" width="595" height="1" forecolor="#ABABAB" uuid="3de7cefc-6e95-4845-930f-ab2c4d7a4d67"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="7" width="26" height="11" uuid="066dcf65-29e2-4ff9-b9b7-986b45cc19ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+					<printWhenExpression><![CDATA[$P{Formato}.equals("NIVELES") || $P{Formato}.equals("DETALLE") ]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="7" width="74" height="11" uuid="bedc86b6-6c63-4c1b-b947-154dc1b1650c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+					<printWhenExpression><![CDATA[$P{Formato}.equals("NIVELES") || $P{Formato}.equals("DETALLE") ]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Clave Molde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="7" width="74" height="11" uuid="628c11eb-cde4-4751-836b-02bcb22471ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e0c2485-05ac-4e30-9c4c-dc8004654012"/>
+					<printWhenExpression><![CDATA[$P{Formato}.equals("NIVELES") || $P{Formato}.equals("DETALLE") ]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Molde]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{Formato}.equals("DETALLE")]]></printWhenExpression>
+			<textField>
+				<reportElement x="214" y="0" width="106" height="10" forecolor="#969696" uuid="d56a31c1-bea1-4397-9d47-b090edd445c6"/>
+				<textElement verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pan}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00;(#,#00.00)">
+				<reportElement x="356" y="0" width="64" height="10" forecolor="#969696" uuid="14f675ff-51d2-425f-b3cd-c48e0a1b45c2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="196963b4-70ff-4c37-ba99-a3bd8c94c9bb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_pan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="214" y="16" width="106" height="10" forecolor="#969696" uuid="743bff0d-829b-4f40-9eb0-0545990140bd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cb867b77-0736-47df-8782-c59ba78f7d77"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cobertura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="214" y="8" width="106" height="10" forecolor="#969696" uuid="77b15ec7-a76a-45eb-91b0-b62f5e945de6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e117b9c9-b558-4ae5-ace9-9bf05e0aa7cf"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{relleno}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00;(#,#00.00)">
+				<reportElement x="356" y="16" width="64" height="10" forecolor="#969696" uuid="8420cfca-9a0b-416a-913e-3ae8a1c04306">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d0106a11-5126-4970-8764-b23fe868b2f9"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_cobertura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,#00.00;(#,#00.00)">
+				<reportElement x="356" y="8" width="64" height="10" forecolor="#969696" uuid="4477535d-11dd-432b-b370-6ec7a4744273">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e972d3c3-6bf6-4f60-a4d0-5c3ec8e2fb13"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_relleno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="0" width="62" height="10" forecolor="#969696" uuid="0cf0e9b7-1e6f-4f7f-81bd-765304522083">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eccea723-ef19-412d-9b89-7746b884f6c3"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cve_pan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="8" width="62" height="10" forecolor="#969696" uuid="b54e7c6a-f867-40cd-ad2e-ab1cee0dd177">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a0858853-e7c3-41a3-96d5-efda2bc745da"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cve_relleno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="16" width="62" height="10" forecolor="#969696" uuid="aa5ce636-2606-45ed-8431-dcccb83c95f5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fb4f6620-2ca8-4a54-bd76-b08a5bf3b345"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cve_cobertura}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -87,6 +87,12 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
+    @livewireScripts
+    <script type="text/javascript">
+        window.livewire.on('closeModal', () => {
+            $('#createDataModal').modal('hide');
+        });
+    </script>
     <script src="{{ asset('admin_assets/plugins/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="{{ asset('admin_assets/plugins/popper.js/dist/umd/popper.min.js') }}"></script>

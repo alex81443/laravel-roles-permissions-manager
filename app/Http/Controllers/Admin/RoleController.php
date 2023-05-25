@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\Entidad;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Support\Facades\Gate;
@@ -78,9 +79,11 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         abort_if(Gate::denies('role_edit'), Response::HTTP_FORBIDDEN, 'Forbidden');
+        $entidades=Entidad::all();
+        $permisos=Permission::all();
         $permissions = Permission::all()->pluck('name', 'id');
 
-        return view('admin.roles.edit', compact('role','permissions'));
+        return view('admin.roles.edit', compact('role','permissions','entidades','permisos'));
     }
 
     /**
@@ -92,6 +95,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+       // dd($request);
         $role->update($request->validated());
         $role->permissions()->sync($request->permissions);
 

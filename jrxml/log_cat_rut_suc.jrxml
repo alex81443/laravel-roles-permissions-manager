@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="log_cat_rut_suc" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b0f0dd8f-3513-4225-afd8-6223af35bf1f">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="La Toga"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="477"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="515"/>
+	<parameter name="Sucursales" class="java.lang.String">
+		<parameterDescription><![CDATA[Sucursales]]></parameterDescription>
+	</parameter>
+	<parameter name="Agrupar" class="java.lang.String">
+		<parameterDescription><![CDATA[Agrupar]]></parameterDescription>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+	a.*
+FROM (
+	
+	
+SELECT
+	s.clave AS suc_cve, ucase(s.descripcion) AS suc_des,
+	case when d.id_ruta_det IS NULL then 'SIN RUTA' else e.descripcion END AS ruta,
+	case when c.c_ruta = 1 then 1 ELSE 0 END AS c_ruta,
+	'TODAS' AS ta,
+	case when d.id_ruta_det IS NULL then 1 ELSE 0 END AS orden_ruta,
+	case when $P{Agrupar} = 'SI' then (case when d.id_ruta_det IS NULL then 'SIN RUTA' else e.descripcion END) else '' end as grupo_ruta	
+	FROM
+	sucursales AS s LEFT JOIN (
+			SELECT
+				d.id_sucursal, 1 AS c_ruta
+			FROM
+				rutas AS e INNER JOIN
+				ruta_det AS d ON e.id_ruta = d.id_ruta
+			WHERE 
+				e.id_estatus = 1 AND d.id_estatus = 1) AS c ON c.id_sucursal = s.id_sucursal LEFT JOIN			
+	ruta_det AS d ON d.id_sucursal = c.id_sucursal LEFT JOIN 
+	rutas AS e ON e.id_ruta = d.id_ruta
+WHERE 
+	e.id_estatus = 1 OR (d.id_ruta_det IS NULL AND s.id_estatus = 1) 
+	
+			
+			
+			) as a
+WHERE
+	CASE WHEN $P{Sucursales} = 'TODAS' THEN a.ta = $P{Sucursales} else 
+		(case when $P{Sucursales} = 'CON RUTA' then a.c_ruta = 1 else a.c_ruta = 0 end) end
+order by 
+	case when $P{Agrupar} = 'SI' then a.orden_ruta else a.grupo_ruta end, 
+	a.grupo_ruta, a.suc_des]]>
+	</queryString>
+	<field name="suc_cve" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="suc_cve"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sucursales"/>
+	</field>
+	<field name="suc_des" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="suc_des"/>
+	</field>
+	<field name="ruta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ruta"/>
+	</field>
+	<field name="c_ruta" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="c_ruta"/>
+	</field>
+	<field name="ta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ta"/>
+	</field>
+	<field name="orden_ruta" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="orden_ruta"/>
+	</field>
+	<field name="grupo_ruta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="grupo_ruta"/>
+	</field>
+	<group name="Ruta">
+		<groupExpression><![CDATA[$F{grupo_ruta}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<printWhenExpression><![CDATA[$P{Agrupar}.startsWith("SI")]]></printWhenExpression>
+				<rectangle>
+					<reportElement x="-20" y="0" width="595" height="12" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="56d40513-658b-460e-ad97-85d7918e0375">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="0.0" lineColor="#FED300"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement x="1" y="0" width="279" height="12" uuid="5b2b1e4e-21af-438b-a3df-e94880eb7ee6"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupo_ruta}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="49" splitType="Stretch">
+			<rectangle>
+				<reportElement x="-20" y="11" width="595" height="16" forecolor="#FFFFCC" backcolor="#FFFFCC" uuid="48de3201-a956-47de-8f3d-f0eda5f75c67">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#FED300"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="-10" width="97" height="49" forecolor="#E6007E" backcolor="#FFFFFF" uuid="81c8d215-a30e-4ddb-b6cd-f27bb661da6a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<image>
+				<reportElement x="-5" y="-8" width="103" height="47" uuid="c5c21ec2-e012-4e04-b0b7-5b3a841d293d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["https://sistematoga.com/images/logo_la_toga.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="11" width="452" height="16" forecolor="#000000" uuid="90c42495-ed55-48d8-9f42-5d264bc8978a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Asignación de Rutas a Sucursales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="28" width="60" height="11" uuid="809da50d-8f49-4593-88b6-1976b53420e5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1869230b-ce00-4354-b9d0-964d41a7aefb"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<text><![CDATA[Sucursales]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="28" width="136" height="11" uuid="9d5969df-a897-4bef-bcd5-563b5ddaa4b0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Sucursales}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement x="52" y="0" width="80" height="10" uuid="147af0f2-244c-47ae-bdd9-46db0294848e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f5bdc269-edfd-4caa-bf26-d377d42db4cf"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLAVE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="0" width="170" height="10" uuid="b04bacd4-ff14-4e8f-8f18-5df0dc966f56">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7622d1d-8483-40f4-b7a4-00abe98b1387"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUCURSAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="0" width="110" height="10" uuid="8ee009ca-4aa0-422a-9944-b4cde1b32859">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a1f5ec5-4097-4d25-9490-fca366d340d9"/>
+					<printWhenExpression><![CDATA[$P{Agrupar}.startsWith("NO")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUTA ASIGNADA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-20" y="10" width="595" height="1" forecolor="#C8C8C8" uuid="21d443d7-cf42-44e5-be15-41b5bd6ba70b"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="0" width="69" height="10" uuid="0938de7f-3a2c-41b1-b770-b2433173aa31">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a1f5ec5-4097-4d25-9490-fca366d340d9"/>
+					<printWhenExpression><![CDATA[$P{Agrupar}.startsWith("SI")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUTA ASIGNADA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="52" y="0" width="80" height="10" uuid="d01e0e39-be28-4e91-9ec3-7ad40f7eff85">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f5bdc269-edfd-4caa-bf26-d377d42db4cf"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{suc_cve}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="0" width="170" height="10" uuid="ca51f83c-56e6-494f-89c3-f54a116c4a97">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7622d1d-8483-40f4-b7a4-00abe98b1387"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{suc_des}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="0" width="110" height="10" uuid="845e4302-b51d-47e5-bcbe-2a1ef9005143">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a1f5ec5-4097-4d25-9490-fca366d340d9"/>
+					<printWhenExpression><![CDATA[$P{Agrupar}.startsWith("NO")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ruta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="8" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>
